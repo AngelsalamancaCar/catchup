@@ -1,0 +1,75 @@
+{{define "content"}}
+<div class="card">
+  <h1>Matriz Eisenhower</h1>
+  <p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
+</div>
+
+<div class="card">
+  <form hx-get="/matrix/eisenhower/svg" hx-target="#matrix-container" hx-swap="innerHTML" hx-trigger="change">
+    <div class="threshold-controls">
+      <div class="field">
+        <label>Umbral de Urgencia: <span id="urgency-th-val">{{pct .UrgencyThreshold}}</span></label>
+        <input type="range" min="0" max="100" name="urgency_threshold" value="{{.UrgencyThreshold}}"
+          oninput="document.getElementById('urgency-th-val').textContent = this.value">
+      </div>
+      <div class="field">
+        <label>Umbral de Importancia: <span id="importance-th-val">{{pct .ImportanceThreshold}}</span></label>
+        <input type="range" min="0" max="100" name="importance_threshold" value="{{.ImportanceThreshold}}"
+          oninput="document.getElementById('importance-th-val').textContent = this.value">
+      </div>
+    </div>
+    <label class="checkbox-row"><input type="checkbox" name="show_all" value="1" {{if .ShowAll}}checked{{end}}> Mostrar todos los tipos (no solo Recurrentes/Ad-hoc)</label>
+  </form>
+</div>
+
+<div class="matrix-layout">
+  <div id="matrix-container">
+  {{template "matrix_container" .}}
+  </div>
+  <div id="detail-panel" class="card detail-panel">
+    <p class="hint">Haz click en un punto para ver su desglose. Los puntos con borde punteado (ℹ) necesitan más información.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Necesitan información (rankeadas por prioridad)</h2>
+  <p class="hint">Importancia × Incertidumbre — dónde conseguir más información cambia más la decisión.</p>
+  {{if not .InfoRanked}}
+    <p class="hint">Ninguna actividad mostrada tiene incertidumbre alta o respuestas marcadas como conjetura.</p>
+  {{else}}
+  <table>
+    <thead><tr><th>Actividad</th><th>InfoPriority</th><th>Qué falta / quién lo tiene</th></tr></thead>
+    <tbody>
+    {{range .InfoRanked}}
+      <tr><td>{{.Name}}</td><td>{{pct .InfoPriority}}</td><td>{{if .F3}}{{.F3}}{{else}}—{{end}}</td></tr>
+    {{end}}
+    </tbody>
+  </table>
+  {{end}}
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Decide con lo que tienes</h2>
+  <p class="hint">Baja importancia y baja incertidumbre: seguir analizando aquí es tiempo perdido.</p>
+  {{if not .DecideList}}
+    <p class="hint">Ninguna actividad mostrada cae en esta categoría.</p>
+  {{else}}
+  <ul>{{range .DecideList}}<li>{{.Name}}</li>{{end}}</ul>
+  {{end}}
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">En la frontera (±8 del umbral)</h2>
+  {{if not .BorderlineList}}
+    <p class="hint">Ninguna actividad mostrada está cerca de un umbral.</p>
+  {{else}}
+  <ul>{{range .BorderlineList}}<li>{{.Name}} — eje de {{.Axis}}</li>{{end}}</ul>
+  {{end}}
+</div>
+{{end}}
+
+{{define "matrix_container"}}
+<div class="card">
+  {{template "matrix_svg" .SVG}}
+</div>
+{{end}}

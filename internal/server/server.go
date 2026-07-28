@@ -48,6 +48,10 @@ func (s *Server) loadTemplates() {
 	s.mustParse("activity_wizard", "templates/activity_wizard.html.tmpl")
 	s.mustParse("config", "templates/config.html.tmpl")
 	s.mustParse("placeholder", "templates/placeholder.html.tmpl")
+	s.mustParse("matrix_impact_effort",
+		"templates/matrix_svg.svg.tmpl", "templates/activity_detail.html.tmpl", "templates/matrix_impact_effort.html.tmpl")
+	s.mustParse("matrix_eisenhower",
+		"templates/matrix_svg.svg.tmpl", "templates/activity_detail.html.tmpl", "templates/matrix_eisenhower.html.tmpl")
 }
 
 func (s *Server) routes() {
@@ -76,12 +80,13 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("POST /config/sections", s.handleConfigSections)
 	s.mux.HandleFunc("POST /config/weights", s.handleConfigWeights)
 
-	s.mux.HandleFunc("GET /matrix/impact-effort", s.handlePlaceholder(
-		"Matriz Impacto/Esfuerzo", "impact-effort",
-		"Disponible en la Fase 2: motor de scoring y matrices SVG."))
-	s.mux.HandleFunc("GET /matrix/eisenhower", s.handlePlaceholder(
-		"Matriz Eisenhower", "eisenhower",
-		"Disponible en la Fase 2: motor de scoring y matrices SVG."))
+	s.mux.HandleFunc("GET /matrix/impact-effort", s.handleMatrixImpactEffort)
+	s.mux.HandleFunc("GET /matrix/impact-effort/svg", s.handleMatrixImpactEffortSVG)
+	s.mux.HandleFunc("GET /matrix/impact-effort/detail/{id}", s.handleMatrixImpactEffortDetail)
+	s.mux.HandleFunc("GET /matrix/eisenhower", s.handleMatrixEisenhower)
+	s.mux.HandleFunc("GET /matrix/eisenhower/svg", s.handleMatrixEisenhowerSVG)
+	s.mux.HandleFunc("GET /matrix/eisenhower/detail/{id}", s.handleMatrixEisenhowerDetail)
+
 	s.mux.HandleFunc("GET /org/swimlanes", s.handlePlaceholder(
 		"Organización", "org",
 		"Disponible en la Fase 3: swimlanes y treemap organizacional."))

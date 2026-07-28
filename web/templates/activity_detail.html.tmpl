@@ -1,0 +1,51 @@
+{{define "detail_panel"}}
+<div class="detail-header">
+  <h3>{{.Activity.Name}}</h3>
+  <span class="badge">{{.Activity.Type}}</span>
+</div>
+<dl class="detail-grid">
+  <dt>Owner</dt><dd>{{.Activity.Owner}}</dd>
+  <dt>Sección</dt><dd>{{.Activity.Section}}</dd>
+  <dt>Riesgo si se retrasa 30 días</dt><dd>{{d2Label .Activity.Answers.D2}}</dd>
+  <dt>Dependencias externas</dt><dd>{{c4Label .Activity.Answers.C4}}</dd>
+  <dt>Fit estratégico (B1)</dt><dd>{{.Activity.Answers.B1}}/5</dd>
+</dl>
+
+{{if .Activity.Deliverables}}
+<h4>Entregables y dependencias</h4>
+<ul class="deliverable-list">
+{{range .Activity.Deliverables}}
+  <li>{{.Name}} — {{fmtDate .Due}} — {{.Status}}{{if .DependsOn}} (depende de {{.DependsOn}}){{end}}</li>
+{{end}}
+</ul>
+{{end}}
+
+{{if .DelegateCandidates}}
+<div class="delegate-suggestion">
+  <strong>Sugerencia de delegación</strong> (D4 indica que otra persona podría hacerlo):
+  {{join .DelegateCandidates ", "}}
+</div>
+{{end}}
+
+<h4>Desglose de scores</h4>
+{{template "score_breakdown" dict "Label" "Impacto" "Result" .Scores.Impact}}
+{{template "score_breakdown" dict "Label" "Esfuerzo" "Result" .Scores.Effort}}
+{{template "score_breakdown" dict "Label" "Urgencia" "Result" .Scores.Urgency}}
+{{template "score_breakdown" dict "Label" "Importancia" "Result" .Scores.Importance}}
+{{template "score_breakdown" dict "Label" "Incertidumbre" "Result" .Scores.Uncertainty}}
+<p class="hint">InfoPriority (Importancia × Incertidumbre / 100): {{pct .Scores.InfoPriority}}</p>
+{{end}}
+
+{{define "score_breakdown"}}
+<details class="score-breakdown">
+  <summary>{{.Label}}: {{pct .Result.Score}}</summary>
+  <table class="breakdown-table">
+    <thead><tr><th>Clave</th><th>Respuesta</th><th>Peso</th><th>Normalizado</th><th>Contribución</th></tr></thead>
+    <tbody>
+    {{range .Result.Breakdown}}
+      <tr><td>{{.Key}}</td><td>{{.RawValue}}</td><td>{{.Weight}}</td><td>{{pct .Normalized}}</td><td>{{pct .Contribution}}</td></tr>
+    {{end}}
+    </tbody>
+  </table>
+</details>
+{{end}}

@@ -169,3 +169,50 @@ textarea { min-height: 4.5rem; resize: vertical; }
   text-align: center;
   color: var(--color-muted);
 }
+
+/* Matrices SVG (Impacto/Esfuerzo, Eisenhower) */
+
+.threshold-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.75rem; }
+.threshold-controls .field { margin-bottom: 0; }
+.threshold-controls input[type=range] { width: 100%; }
+
+.toolbar-toggles { display: flex; gap: 1.25rem; flex-wrap: wrap; align-items: center; }
+
+.matrix-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .matrix-layout { grid-template-columns: 1fr; }
+}
+
+.matrix-svg { width: 100%; height: auto; display: block; }
+.axis-line { stroke: #999; stroke-width: 1; }
+.threshold-line { stroke: #bbb; stroke-width: 1; stroke-dasharray: 4 3; }
+.axis-label { fill: var(--color-muted); font-size: 11px; }
+.quadrant-label { fill: var(--color-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; }
+.matrix-point circle { cursor: pointer; opacity: 0.9; }
+.matrix-point:hover circle { opacity: 1; stroke: #333; stroke-width: 1; }
+.matrix-point circle.dashed-point { stroke: #333; stroke-width: 1.5; stroke-dasharray: 3 2; }
+.info-badge { font-size: 10px; fill: var(--color-danger); font-weight: 700; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.75rem; font-size: 0.8rem; color: var(--color-muted); }
+.legend-item { display: inline-flex; align-items: center; gap: 0.35rem; }
+.legend-dot { width: 0.7rem; height: 0.7rem; border-radius: 50%; display: inline-block; }
+
+.detail-panel { min-height: 12rem; font-size: 0.88rem; }
+.detail-header { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem; }
+.detail-header h3 { margin: 0; font-size: 1rem; }
+.detail-grid { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.6rem; margin: 0 0 0.75rem; }
+.detail-grid dt { color: var(--color-muted); font-size: 0.78rem; }
+.detail-grid dd { margin: 0; }
+
+.deliverable-list { padding-left: 1.1rem; font-size: 0.85rem; }
+.delegate-suggestion { background: #f3efe0; border-radius: var(--radius); padding: 0.5rem 0.7rem; font-size: 0.85rem; margin: 0.5rem 0; }
+
+.score-breakdown { margin-bottom: 0.4rem; font-size: 0.85rem; }
+.score-breakdown summary { cursor: pointer; font-weight: 600; }
+.breakdown-table { margin-top: 0.4rem; font-size: 0.78rem; }
+.breakdown-table th, .breakdown-table td { padding: 0.25rem 0.4rem; }

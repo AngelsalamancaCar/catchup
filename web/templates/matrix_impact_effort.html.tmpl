@@ -1,0 +1,56 @@
+{{define "content"}}
+<div class="card">
+  <h1>Matriz Impacto/Esfuerzo</h1>
+  <p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
+</div>
+
+<div class="card">
+  <form hx-get="/matrix/impact-effort/svg" hx-target="#matrix-container" hx-swap="innerHTML" hx-trigger="change">
+    <div class="threshold-controls">
+      <div class="field">
+        <label>Umbral de Impacto: <span id="impact-th-val">{{pct .ImpactThreshold}}</span></label>
+        <input type="range" min="0" max="100" name="impact_threshold" value="{{.ImpactThreshold}}"
+          oninput="document.getElementById('impact-th-val').textContent = this.value">
+      </div>
+      <div class="field">
+        <label>Umbral de Esfuerzo: <span id="effort-th-val">{{pct .EffortThreshold}}</span></label>
+        <input type="range" min="0" max="100" name="effort_threshold" value="{{.EffortThreshold}}"
+          oninput="document.getElementById('effort-th-val').textContent = this.value">
+      </div>
+    </div>
+    <div class="toolbar-toggles">
+      <label class="checkbox-row"><input type="radio" name="color_mode" value="section" {{if eq .ColorMode "section"}}checked{{end}}> Color por sección</label>
+      <label class="checkbox-row"><input type="radio" name="color_mode" value="fit" {{if eq .ColorMode "fit"}}checked{{end}}> Color por fit estratégico (B1)</label>
+      <label class="checkbox-row"><input type="checkbox" name="show_all" value="1" {{if .ShowAll}}checked{{end}}> Mostrar todos los tipos (no solo Proyectos/Workstreams)</label>
+    </div>
+  </form>
+</div>
+
+<div class="matrix-layout">
+  <div id="matrix-container">
+  {{template "matrix_container" .}}
+  </div>
+  <div id="detail-panel" class="card detail-panel">
+    <p class="hint">Haz click en un punto de la matriz para ver su desglose.</p>
+  </div>
+</div>
+{{end}}
+
+{{define "matrix_container"}}
+<div class="card">
+  {{template "matrix_svg" .SVG}}
+  <div class="legend">
+  {{if eq .ColorMode "section"}}
+    {{$sections := .Sections}}
+    {{range .Sections}}<span class="legend-item"><span class="legend-dot" style="background:{{sectionColor $sections .}}"></span>{{.}}</span>{{end}}
+  {{else}}
+    <span class="legend-item">Fit estratégico (B1):</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#dbe8e3"></span>1</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#a9c9bd"></span>2</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#77aa97"></span>3</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#458b71"></span>4</span>
+    <span class="legend-item"><span class="legend-dot" style="background:#2f5d50"></span>5</span>
+  {{end}}
+  </div>
+</div>
+{{end}}

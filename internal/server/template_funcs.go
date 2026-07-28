@@ -4,7 +4,11 @@ import (
 	"fmt"
 	"html/template"
 	"slices"
+	"strings"
 	"time"
+
+	"projectmapper/internal/scoring"
+	"projectmapper/internal/svg"
 )
 
 // ScaleOption es un punto de una escala 1-5 con su ancla textual.
@@ -124,13 +128,49 @@ func slice(items ...string) []string {
 	return items
 }
 
+// d2Label traduce el valor crudo de D2 a una etiqueta legible.
+func d2Label(v string) string {
+	switch v {
+	case "nothing":
+		return "Nada"
+	case "friction":
+		return "Fricción menor"
+	case "escalation":
+		return "Escalamiento"
+	case "breach":
+		return "Incumplimiento o pérdida"
+	default:
+		return v
+	}
+}
+
+// c4Label traduce el valor crudo de C4 a una etiqueta legible.
+func c4Label(v string) string {
+	switch v {
+	case "none":
+		return "Ninguna"
+	case "some":
+		return "Algunas"
+	case "blocking":
+		return "Bloqueantes"
+	default:
+		return v
+	}
+}
+
 func funcMap() template.FuncMap {
 	return template.FuncMap{
-		"anchors":  anchors,
-		"dict":     dict,
-		"contains": contains,
-		"fmtDate":  fmtDate,
-		"pct":      pct,
-		"slice":    slice,
+		"anchors":           anchors,
+		"dict":              dict,
+		"contains":          contains,
+		"fmtDate":           fmtDate,
+		"pct":               pct,
+		"slice":             slice,
+		"join":              strings.Join,
+		"d2Label":           d2Label,
+		"c4Label":           c4Label,
+		"sectionColor":      svg.SectionColor,
+		"impactEffortLabel": scoring.ImpactEffortLabel,
+		"eisenhowerLabel":   scoring.EisenhowerLabel,
 	}
 }

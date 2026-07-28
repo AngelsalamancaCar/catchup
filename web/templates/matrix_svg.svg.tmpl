@@ -1,0 +1,28 @@
+{{define "matrix_svg"}}
+<svg viewBox="0 0 {{.Width}} {{.Height}}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{{.AriaLabel}}" class="matrix-svg">
+  <title>{{.AriaLabel}}</title>
+
+  <line x1="{{.PadLeft}}" y1="{{.PadTop}}" x2="{{.PadLeft}}" y2="{{.PlotBottom}}" class="axis-line"/>
+  <line x1="{{.PadLeft}}" y1="{{.PlotBottom}}" x2="{{.PlotRight}}" y2="{{.PlotBottom}}" class="axis-line"/>
+
+  <line x1="{{.ThresholdXpx}}" y1="{{.PadTop}}" x2="{{.ThresholdXpx}}" y2="{{.PlotBottom}}" class="threshold-line"/>
+  <line x1="{{.PadLeft}}" y1="{{.ThresholdYpx}}" x2="{{.PlotRight}}" y2="{{.ThresholdYpx}}" class="threshold-line"/>
+
+  <text x="{{.CenterX}}" y="{{.Height}}" text-anchor="middle" class="axis-label">{{.XLabel}}</text>
+  <text x="14" y="{{.CenterY}}" text-anchor="middle" class="axis-label" transform="rotate(-90 14 {{.CenterY}})">{{.YLabel}}</text>
+
+  <text x="{{.QLabelLeftX}}" y="{{.QLabelTopY}}" text-anchor="start" class="quadrant-label">{{.QuadrantTopLeft}}</text>
+  <text x="{{.QLabelRightX}}" y="{{.QLabelTopY}}" text-anchor="end" class="quadrant-label">{{.QuadrantTopRight}}</text>
+  <text x="{{.QLabelLeftX}}" y="{{.QLabelBottomY}}" text-anchor="start" class="quadrant-label">{{.QuadrantBottomLeft}}</text>
+  <text x="{{.QLabelRightX}}" y="{{.QLabelBottomY}}" text-anchor="end" class="quadrant-label">{{.QuadrantBottomRight}}</text>
+
+  {{range .Points}}
+  <g class="matrix-point" hx-get="{{.DetailURL}}" hx-target="#detail-panel" hx-swap="innerHTML" tabindex="0" role="button">
+    <circle cx="{{.CX}}" cy="{{.CY}}" r="{{.R}}" fill="{{.Color}}" {{if .Dashed}}class="dashed-point"{{end}}>
+      <title>{{.Label}}</title>
+    </circle>
+    {{if .Badge}}<text x="{{.BadgeX}}" y="{{.BadgeY}}" class="info-badge">{{.Badge}}</text>{{end}}
+  </g>
+  {{end}}
+</svg>
+{{end}}
