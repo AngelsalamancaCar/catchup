@@ -1,0 +1,170 @@
+{
+  "sections": ["Operaciones", "Finanzas", "Legal", "IT"],
+  "weights": {
+    "impact": {"B1": 0.4, "B2": 0.2, "B3": 0.25, "B4": 0.15},
+    "effort": {"C1": 0.4, "C2": 0.2, "C3": 0.25, "C4": 0.15}
+  },
+  "thresholds": {"impact": 50, "effort": 50, "urgency": 50, "importance": 50},
+  "activities": [
+    {
+      "id": "ACT-001",
+      "name": "Migración del ERP financiero",
+      "type": "Project",
+      "owner": "Marta Gómez",
+      "section": "Finanzas",
+      "involved": ["IT", "Operaciones"],
+      "description": "Reemplazar el ERP legado por una plataforma cloud, incluyendo migración de datos históricos.",
+      "answers": {
+        "b1": 5, "b2": 4, "b3": 5, "b4": 4,
+        "c1": ">120", "c2": 4, "c3": 5, "c4": "blocking",
+        "d1": "2026-11-30", "d2": "escalation", "d3": "shared", "d4": "no",
+        "f1": 3, "f2": ["C1"], "f3": "Falta el alcance exacto de módulos a migrar; lo tiene el proveedor."
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Diseño de migración de datos", "due": "2026-08-15", "status": "in_progress", "depends_on": null},
+        {"id": "DLV-002", "name": "Go-live módulo contable", "due": "2026-11-30", "status": "not_started", "depends_on": "DLV-001"}
+      ],
+      "created_at": "2026-01-10T09:00:00Z",
+      "updated_at": "2026-06-01T09:00:00Z"
+    },
+    {
+      "id": "ACT-002",
+      "name": "Automatizar reporte semanal de ventas",
+      "type": "Workstream",
+      "owner": "Carlos Ruiz",
+      "section": "Operaciones",
+      "involved": [],
+      "description": "Reemplazar el armado manual del reporte semanal por un dashboard automático.",
+      "answers": {
+        "b1": 3, "b2": 3, "b3": 2, "b4": 2,
+        "c1": "5-20", "c2": 1, "c3": 2, "c4": "none",
+        "d1": null, "d2": "friction", "d3": "mine", "d4": "yes",
+        "f1": 5, "f2": [], "f3": ""
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Dashboard v1", "due": "2026-08-05", "status": "in_progress", "depends_on": null}
+      ],
+      "created_at": "2026-02-03T09:00:00Z",
+      "updated_at": "2026-06-10T09:00:00Z"
+    },
+    {
+      "id": "ACT-003",
+      "name": "Revisión anual de contratos con proveedores",
+      "type": "Recurring",
+      "owner": "Lucía Fernández",
+      "section": "Legal",
+      "involved": ["Finanzas"],
+      "description": "Revisar y renegociar condiciones de los 15 contratos de proveedores críticos.",
+      "answers": {
+        "b1": 2, "b2": 2, "b3": 3, "b4": 3,
+        "c1": "20-60", "c2": 2, "c3": 3, "c4": "some",
+        "d1": "2026-09-01", "d2": "breach", "d3": "shared", "d4": "partial",
+        "f1": 4, "f2": [], "f3": ""
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Lista priorizada de renegociación", "due": "2026-08-10", "status": "not_started", "depends_on": null}
+      ],
+      "created_at": "2026-01-20T09:00:00Z",
+      "updated_at": "2026-05-15T09:00:00Z"
+    },
+    {
+      "id": "ACT-004",
+      "name": "Actualizar política de seguridad de accesos",
+      "type": "AdHoc",
+      "owner": "Diego Paredes",
+      "section": "IT",
+      "involved": ["Legal"],
+      "description": "Redactar y publicar la nueva política de accesos tras la auditoría externa.",
+      "answers": {
+        "b1": 4, "b2": 5, "b3": 3, "b4": 5,
+        "c1": "<5", "c2": 2, "c3": 2, "c4": "none",
+        "d1": "2026-08-01", "d2": "breach", "d3": "mine", "d4": "no",
+        "f1": 2, "f2": ["B3", "D2"], "f3": "Falta confirmar el impacto financiero real de un incidente; lo tiene el CISO."
+      },
+      "deliverables": [],
+      "created_at": "2026-03-01T09:00:00Z",
+      "updated_at": "2026-06-20T09:00:00Z"
+    },
+    {
+      "id": "ACT-005",
+      "name": "Newsletter interno mensual",
+      "type": "Recurring",
+      "owner": "Sofía Herrera",
+      "section": "Operaciones",
+      "involved": [],
+      "description": "Compilar y enviar el boletín interno de novedades cada mes.",
+      "answers": {
+        "b1": 1, "b2": 3, "b3": 1, "b4": 1,
+        "c1": "<5", "c2": 1, "c3": 1, "c4": "none",
+        "d1": null, "d2": "nothing", "d3": "other", "d4": "yes",
+        "f1": 5, "f2": [], "f3": ""
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Edición de agosto", "due": "2026-08-01", "status": "not_started", "depends_on": null}
+      ],
+      "created_at": "2026-01-05T09:00:00Z",
+      "updated_at": "2026-06-01T09:00:00Z"
+    },
+    {
+      "id": "ACT-006",
+      "name": "Consolidación de reportes regulatorios",
+      "type": "Project",
+      "owner": "Marta Gómez",
+      "section": "Finanzas",
+      "involved": ["Legal", "IT", "Operaciones"],
+      "description": "Unificar los reportes que hoy se arman por separado para el regulador.",
+      "answers": {
+        "b1": 4, "b2": 3, "b3": 4, "b4": 4,
+        "c1": "60-120", "c2": 5, "c3": 4, "c4": "blocking",
+        "d1": "2026-12-15", "d2": "escalation", "d3": "shared", "d4": "partial",
+        "f1": 2, "f2": ["B1", "C1", "C2"], "f3": "No está claro si Legal libera recursos este trimestre; lo sabe la jefatura de Legal."
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Mapeo de reportes actuales", "due": "2026-08-20", "status": "at_risk", "depends_on": null},
+        {"id": "DLV-002", "name": "Reporte unificado piloto", "due": "2026-11-01", "status": "not_started", "depends_on": "DLV-001"}
+      ],
+      "created_at": "2026-02-15T09:00:00Z",
+      "updated_at": "2026-06-25T09:00:00Z"
+    },
+    {
+      "id": "ACT-007",
+      "name": "Onboarding self-service de nuevos empleados",
+      "type": "Workstream",
+      "owner": "Carlos Ruiz",
+      "section": "Operaciones",
+      "involved": ["IT"],
+      "description": "Portal donde los nuevos empleados completan su propio onboarding administrativo.",
+      "answers": {
+        "b1": 3, "b2": 4, "b3": 2, "b4": 2,
+        "c1": "20-60", "c2": 2, "c3": 3, "c4": "some",
+        "d1": null, "d2": "friction", "d3": "mine", "d4": "yes",
+        "f1": 4, "f2": [], "f3": ""
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Portal v1", "due": "2026-09-10", "status": "in_progress", "depends_on": null}
+      ],
+      "created_at": "2026-03-10T09:00:00Z",
+      "updated_at": "2026-06-18T09:00:00Z"
+    },
+    {
+      "id": "ACT-008",
+      "name": "Due diligence legal para nueva adquisición",
+      "type": "AdHoc",
+      "owner": "Lucía Fernández",
+      "section": "Legal",
+      "involved": ["Finanzas"],
+      "description": "Revisión legal exhaustiva de la empresa objetivo antes del cierre.",
+      "answers": {
+        "b1": 5, "b2": 2, "b3": 5, "b4": 5,
+        "c1": "20-60", "c2": 2, "c3": 4, "c4": "blocking",
+        "d1": "2026-08-20", "d2": "breach", "d3": "mine", "d4": "no",
+        "f1": 3, "f2": ["B3"], "f3": "Falta la valuación final del target; la tiene el equipo de M&A externo."
+      },
+      "deliverables": [
+        {"id": "DLV-001", "name": "Informe de due diligence", "due": "2026-08-18", "status": "in_progress", "depends_on": null}
+      ],
+      "created_at": "2026-04-01T09:00:00Z",
+      "updated_at": "2026-06-28T09:00:00Z"
+    }
+  ]
+}

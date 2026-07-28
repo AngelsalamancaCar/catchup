@@ -1,0 +1,48 @@
+{{define "content"}}
+<div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+  <div>
+    <h1>Actividades</h1>
+    <p class="hint">{{len .Activities}} actividad(es) registradas.</p>
+  </div>
+  <a class="btn" href="/activities/new">+ Nueva actividad</a>
+</div>
+<div id="activities-table">
+{{template "activities_table" .}}
+</div>
+{{end}}
+
+{{define "activities_table"}}
+<div class="card">
+{{if not .Activities}}
+  <p class="hint">Todavía no hay actividades. Crea la primera con "+ Nueva actividad".</p>
+{{else}}
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th><th>Tipo</th><th>Sección</th><th>Owner</th><th>Impacto</th><th>Esfuerzo</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{range .Activities}}
+      <tr>
+        <td><a href="/activities/{{.ID}}/edit">{{.Name}}</a></td>
+        <td>{{.Type}}</td>
+        <td>{{.Section}}</td>
+        <td>{{.Owner}}</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="actions">
+          <a class="btn small secondary" href="/activities/{{.ID}}/edit">Editar</a>
+          <button class="btn small danger"
+                  hx-delete="/activities/{{.ID}}"
+                  hx-confirm="¿Borrar la actividad &quot;{{.Name}}&quot;? Esta acción no se puede deshacer."
+                  hx-target="#activities-table"
+                  hx-swap="innerHTML">Borrar</button>
+        </td>
+      </tr>
+      {{end}}
+    </tbody>
+  </table>
+{{end}}
+</div>
+{{end}}
