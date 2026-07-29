@@ -1,0 +1,13 @@
+{{define "content"}}
+<div class="card">
+  <h1>Organización</h1>
+  <div class="org-tabs">
+    <a class="btn small secondary" href="/org/swimlanes">Swimlanes</a>
+    <a class="btn small" href="/org/treemap">Treemap</a>
+  </div>
+  <p class="hint">Área de cada sección proporcional a sus persona-días totales. Click en una sección para filtrar el swimlane.</p>
+</div>
+<div class="card">
+  {{template "treemap_svg" .SVG}}
+</div>
+{{end}}

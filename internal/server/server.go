@@ -47,11 +47,14 @@ func (s *Server) loadTemplates() {
 	s.mustParse("activities_list", "templates/activities_list.html.tmpl")
 	s.mustParse("activity_wizard", "templates/activity_wizard.html.tmpl")
 	s.mustParse("config", "templates/config.html.tmpl")
-	s.mustParse("placeholder", "templates/placeholder.html.tmpl")
 	s.mustParse("matrix_impact_effort",
 		"templates/matrix_svg.svg.tmpl", "templates/activity_detail.html.tmpl", "templates/matrix_impact_effort.html.tmpl")
 	s.mustParse("matrix_eisenhower",
 		"templates/matrix_svg.svg.tmpl", "templates/activity_detail.html.tmpl", "templates/matrix_eisenhower.html.tmpl")
+	s.mustParse("org_swimlanes", "templates/swimlane_svg.svg.tmpl", "templates/org_swimlanes.html.tmpl")
+	s.mustParse("org_treemap", "templates/treemap_svg.svg.tmpl", "templates/org_treemap.html.tmpl")
+	s.mustParse("timeline", "templates/timeline_svg.svg.tmpl", "templates/timeline.html.tmpl")
+	s.mustParse("home", "templates/home.html.tmpl")
 }
 
 func (s *Server) routes() {
@@ -87,16 +90,10 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /matrix/eisenhower/svg", s.handleMatrixEisenhowerSVG)
 	s.mux.HandleFunc("GET /matrix/eisenhower/detail/{id}", s.handleMatrixEisenhowerDetail)
 
-	s.mux.HandleFunc("GET /org/swimlanes", s.handlePlaceholder(
-		"Organización", "org",
-		"Disponible en la Fase 3: swimlanes y treemap organizacional."))
-	s.mux.HandleFunc("GET /timeline", s.handlePlaceholder(
-		"Timeline", "timeline",
-		"Disponible en la Fase 3: timeline de entregables."))
-}
-
-func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/activities", http.StatusFound)
+	s.mux.HandleFunc("GET /org/swimlanes", s.handleOrgSwimlanes)
+	s.mux.HandleFunc("GET /org/treemap", s.handleOrgTreemap)
+	s.mux.HandleFunc("GET /timeline", s.handleTimeline)
+	s.mux.HandleFunc("GET /timeline/svg", s.handleTimelineSVG)
 }
 
 // isHX reporta si la petición viene de htmx (para decidir fragmento vs página completa).

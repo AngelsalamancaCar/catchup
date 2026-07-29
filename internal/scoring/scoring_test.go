@@ -71,6 +71,19 @@ func TestNormD3Table(t *testing.T) {
 	}
 }
 
+func TestPersonDaysMidpointTable(t *testing.T) {
+	cases := map[string]float64{
+		"<5": 2.5, "5-20": 12.5, "20-60": 40, "60-120": 90, ">120": 150,
+		"":        0,
+		"invalid": 0,
+	}
+	for band, want := range cases {
+		if got := PersonDaysMidpoint(band); !almostEqual(got, want) {
+			t.Errorf("PersonDaysMidpoint(%q) = %v, esperaba %v", band, got, want)
+		}
+	}
+}
+
 func TestImpactScoreDefaultWeights(t *testing.T) {
 	a := model.Answers{B1: 5, B2: 3, B3: 1, B4: 1}
 	res := ImpactScore(a, defaultWeights())

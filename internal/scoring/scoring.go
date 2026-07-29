@@ -74,6 +74,21 @@ func normC1(band string) float64 {
 	}
 }
 
+// personDaysMidpoint son los puntos medios de persona-días por banda C1,
+// usados para dimensionar el treemap organizacional — §2.4 del plan.
+var personDaysMidpoint = map[string]float64{
+	"<5":     2.5,
+	"5-20":   12.5,
+	"20-60":  40,
+	"60-120": 90,
+	">120":   150,
+}
+
+// PersonDaysMidpoint mapea la banda C1 a su punto medio de persona-días.
+func PersonDaysMidpoint(band string) float64 {
+	return personDaysMidpoint[band]
+}
+
 func normC4(v string) float64 {
 	switch v {
 	case "none":

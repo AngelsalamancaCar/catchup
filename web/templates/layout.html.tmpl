@@ -12,6 +12,7 @@
 <header class="topbar">
   <a class="brand" href="/">Project Mapper</a>
   <nav>
+    <a href="/" {{if eq .Nav "home"}}class="active"{{end}}>Inicio</a>
     <a href="/activities" {{if eq .Nav "activities"}}class="active"{{end}}>Actividades</a>
     <a href="/matrix/impact-effort" {{if eq .Nav "impact-effort"}}class="active"{{end}}>Matriz I/E</a>
     <a href="/matrix/eisenhower" {{if eq .Nav "eisenhower"}}class="active"{{end}}>Eisenhower</a>

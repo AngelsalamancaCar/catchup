@@ -1,0 +1,21 @@
+{{define "content"}}
+<div class="card">
+  <h1>Organización</h1>
+  <div class="org-tabs">
+    <a class="btn small" href="/org/swimlanes">Swimlanes</a>
+    <a class="btn small secondary" href="/org/treemap">Treemap</a>
+  </div>
+  {{if .FilterSection}}
+  <p class="hint">Filtrando por sección: <strong>{{.FilterSection}}</strong> — <a href="/org/swimlanes">quitar filtro</a></p>
+  {{end}}
+</div>
+
+<div class="matrix-layout">
+  <div class="card">
+    {{template "swimlane_svg" .SVG}}
+  </div>
+  <div id="detail-panel" class="card detail-panel">
+    <p class="hint">Haz click en una tarjeta para ver su desglose de scores.</p>
+  </div>
+</div>
+{{end}}

@@ -1,0 +1,14 @@
+{{define "treemap_svg"}}
+<svg viewBox="0 0 {{.Width}} {{.Height}}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{{.AriaLabel}}" class="treemap-svg">
+  <title>{{.AriaLabel}}</title>
+  {{range .Rects}}
+  <a href="{{.DetailURL}}">
+    <rect x="{{.X}}" y="{{.Y}}" width="{{.Width}}" height="{{.Height}}" fill="{{.Color}}" class="treemap-rect">
+      <title>{{.Name}} — {{pct .Value}} persona-días</title>
+    </rect>
+    <text x="{{.LabelX}}" y="{{.LabelY}}" text-anchor="middle" class="treemap-label">{{.Name}}</text>
+    <text x="{{.LabelX}}" y="{{.LabelY}}" dy="16" text-anchor="middle" class="treemap-sub">{{pct .Value}} pd</text>
+  </a>
+  {{end}}
+</svg>
+{{end}}

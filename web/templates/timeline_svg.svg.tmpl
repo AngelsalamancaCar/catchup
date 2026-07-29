@@ -1,0 +1,33 @@
+{{define "timeline_svg"}}
+<svg viewBox="0 0 {{.Width}} {{.Height}}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{{.AriaLabel}}" class="timeline-svg">
+  <title>{{.AriaLabel}}</title>
+
+  <line x1="{{.PlotLeft}}" y1="{{.PlotTop}}" x2="{{.PlotLeft}}" y2="{{.PlotBottom}}" class="axis-line"/>
+  <line x1="{{.PlotLeft}}" y1="{{.PlotBottom}}" x2="{{.PlotRight}}" y2="{{.PlotBottom}}" class="axis-line"/>
+
+  {{$plotTop := .PlotTop}}
+  {{$plotBottom := .PlotBottom}}
+  {{range .Ticks}}
+  <line x1="{{.X}}" y1="{{$plotTop}}" x2="{{.X}}" y2="{{$plotBottom}}" class="tl-tick-line"/>
+  <text x="{{.X}}" y="{{$plotBottom}}" dy="14" text-anchor="middle" class="tl-tick-label">{{.Label}}</text>
+  {{end}}
+
+  {{if .HasToday}}
+  <line x1="{{.TodayX}}" y1="{{.PlotTop}}" x2="{{.TodayX}}" y2="{{.PlotBottom}}" class="tl-today-line"/>
+  <text x="{{.TodayX}}" y="{{.PlotTop}}" dy="-6" text-anchor="middle" class="tl-today-label">Hoy</text>
+  {{end}}
+
+  {{range .Arrows}}
+  <path d="{{.PathD}}" class="tl-arrow{{if .AtRisk}} tl-arrow-risk{{end}}"/>
+  {{end}}
+
+  {{range .Rows}}
+  <g class="tl-row" hx-get="{{.DetailURL}}" hx-target="#detail-panel" hx-swap="innerHTML" tabindex="0" role="button">
+    <text x="6" y="{{.Y}}" dy="4" class="tl-row-label">{{.ActivityName}} — {{.Name}}</text>
+    <circle cx="{{.MarkerX}}" cy="{{.Y}}" r="6" class="tl-marker status-{{.Status}}{{if .AtRisk}} tl-marker-risk{{end}}">
+      <title>{{.ActivityName}} — {{.Name}} ({{.Status}}){{if .AtRisk}} — en riesgo{{end}}</title>
+    </circle>
+  </g>
+  {{end}}
+</svg>
+{{end}}

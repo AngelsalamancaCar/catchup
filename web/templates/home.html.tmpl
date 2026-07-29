@@ -1,0 +1,12 @@
+{{define "content"}}
+<h1>Project Mapper</h1>
+<p class="hint">Resumen rápido del portafolio.</p>
+<div class="dashboard-grid">
+  {{range .Cards}}
+  <a class="card dashboard-card" href="{{.Link}}">
+    <h2 style="margin-top:0;">{{.Title}}</h2>
+    {{range .Lines}}<p>{{.}}</p>{{end}}
+  </a>
+  {{end}}
+</div>
+{{end}}

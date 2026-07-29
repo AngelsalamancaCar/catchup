@@ -2,6 +2,18 @@
 
 > **Uso de este documento:** es un playbook para un agente de Claude Code. Ejecuta las fases en orden. Cada fase tiene tareas concretas, archivos a crear y criterios de aceptación verificables. No avances de fase hasta que los criterios de la fase actual pasen. La fuente de requisitos es `proposal-project-mapper.md`; ante ambigüedad, ese documento manda.
 
+## Estado de avance
+
+| Fase | Estado | Commit |
+|---|---|---|
+| 1 — Esqueleto, modelo, persistencia, cuestionario | ✅ Completa | `8e91312` |
+| 2 — Motor de scoring + matrices SVG | ✅ Completa | `dbdb633` |
+| 3 — Mapa organizacional + timeline | ✅ Completa | `feat(fase-3)`, ver `git log` |
+| 4 — Export + empaquetado + script Python | ⬜ Pendiente | — |
+| 5 — Piloto y calibración | ⬜ Pendiente | — |
+
+Detalle de qué se implementó y qué decisiones no explicitadas por el plan se tomaron en cada fase completada: ver "Notas de implementación" al final de cada fase en la §3. Guía de arquitectura para retomar el trabajo: `CLAUDE.md`.
+
 ---
 
 ## 0. Instrucciones de operación para el agente
@@ -160,11 +172,18 @@ type Deliverable struct {
 9. Seed: `data/seed.json` con 6–8 actividades ficticias variadas (distintos cuadrantes, con y sin deadline, con F2 marcados) para desarrollo y demo. Flag `-seed` lo copia como data inicial.
 
 **Criterios de aceptación:**
-- [ ] `go test ./...` pasa; tests de store: roundtrip load/save, escritura atómica, IDs secuenciales.
-- [ ] Crear actividad completa vía cuestionario de 6 pasos → aparece en el listado → sobrevive a reinicio del binario.
-- [ ] Editar y borrar funcionan; borrar pide confirmación (`hx-confirm`).
-- [ ] Bind solo a `127.0.0.1` (verificar que `0.0.0.0` no responde).
-- [ ] Validación de pesos rechaza sumas ≠ 1.0.
+- [x] `go test ./...` pasa; tests de store: roundtrip load/save, escritura atómica, IDs secuenciales.
+- [x] Crear actividad completa vía cuestionario de 6 pasos → aparece en el listado → sobrevive a reinicio del binario.
+- [x] Editar y borrar funcionan; borrar pide confirmación (`hx-confirm`).
+- [x] Bind solo a `127.0.0.1` (verificar que `0.0.0.0` no responde).
+- [x] Validación de pesos rechaza sumas ≠ 1.0.
+
+**Notas de implementación (decisiones no explicitadas por el plan):**
+- Cuestionario 100% stateless con hidden fields (opción que el plan dejaba abierta en §3 Fase 1 tarea 5); cada paso reenvía todos los campos previos como `<input type="hidden">` y el handler revalida solo el paso recién enviado.
+- Grupo repetible de deliverables (sección E) implementado con `hx-get` + out-of-band swap (`hx-swap-oob`) del botón "+ Deliverable" para mantener el índice siguiente sincronizado sin sesión de servidor; el parseo server-side escanea `deliverables[i].name` hasta un máximo (`maxDeliverables`) en vez de confiar en un contador enviado por el cliente.
+- Cada "grupo de página" (wizard, listado, config, placeholders) se parsea como su propio `*template.Template` combinando `layout.html.tmpl` + archivo(s) de esa página, porque `html/template` comparte el namespace de `{{define "content"}}` dentro de un mismo set parseado — páginas distintas no pueden compartir grupo de parseo.
+- Vistas de Matriz I/E, Eisenhower, Organización y Timeline quedaron como placeholders con mensaje "Disponible en la Fase N" hasta que se implementaran (Matriz I/E y Eisenhower ya se reemplazaron en Fase 2).
+- Se agregó `CLAUDE.md` documentando la arquitectura para retomar el trabajo entre sesiones.
 
 ### FASE 2 — Motor de scoring + dos matrices SVG
 
@@ -185,11 +204,18 @@ type Deliverable struct {
 5. Ruteo por tipo (A2, §4.3 de la propuesta): Projects/Workstreams destacan en I/E; Recurring/Ad-hoc destacan en Eisenhower. Implementar como filtro default por vista (toggle "mostrar todos").
 
 **Criterios de aceptación:**
-- [ ] Tests de scoring pasan con cobertura ≥ 90% del paquete.
-- [ ] Ambas matrices renderizan el seed correctamente (verificar posiciones de 2 actividades a mano contra las fórmulas).
-- [ ] Mover slider de umbral reclasifica sin recargar página completa y persiste tras reinicio.
-- [ ] Actividad con F1=2 muestra borde punteado y aparece en el panel rankeado.
-- [ ] Click en punto abre detalle con desglose peso×respuesta (auditabilidad).
+- [x] Tests de scoring pasan con cobertura ≥ 90% del paquete. (99.1% `internal/scoring`, 100% `internal/svg`)
+- [x] Ambas matrices renderizan el seed correctamente (verificar posiciones de 2 actividades a mano contra las fórmulas). (ACT-001: Impacto 91.25/Esfuerzo 95; ACT-002: Impacto 40/Esfuerzo 18.25, verificado por curl contra cálculo manual)
+- [x] Mover slider de umbral reclasifica sin recargar página completa y persiste tras reinicio.
+- [x] Actividad con F1=2 muestra borde punteado y aparece en el panel rankeado.
+- [x] Click en punto abre detalle con desglose peso×respuesta (auditabilidad).
+
+**Notas de implementación (decisiones no explicitadas por el plan):**
+- `scoring.Compute()` es el único punto de entrada que usan los handlers: agrupa los 5 scores, ambas clasificaciones de cuadrante, ambos flags de "en la frontera" y los flags de overlay de información (`NeedsInfo`, `DecideWithWhatYouHave`) en una sola llamada.
+- `internal/svg.BuildMatrix()` es el "helper común" pedido por la tarea 4.2: hace toda la aritmética (proyección score→píxel, posición de líneas de umbral, anclas de etiquetas de cuadrante, offset de badges) en Go, así `matrix_svg.svg.tmpl` solo interpola valores ya calculados y nunca hace matemática — evita que el render SVG "se vuelva inmanejable" (riesgo §5 del plan).
+- El overlay de información (borde punteado + badge "ℹ") se implementó solo en Eisenhower, no en Impacto/Esfuerzo — el plan lo describe únicamente bajo §4.2/tarea 4, y la matriz I/E usa el click-detail para exponer riesgo/dependencias/fit en su lugar.
+- El ruteo por tipo (A2, §4.3) se aplicó en los handlers (`isImpactEffortType`/`isEisenhowerType` en `handlers_matrix.go`), no en `scoring` ni `svg`, para mantener esos paquetes agnósticos del tipo de actividad.
+- Sugerencia de delegados verificada por revisión de código (`delegateCandidates`); el seed no contiene un caso con cuadrante Delegar + múltiples owners distintos en la misma sección, así que no se pudo demostrar con datos reales una lista no vacía.
 
 ### FASE 3 — Mapa organizacional + timeline
 
@@ -201,10 +227,21 @@ type Deliverable struct {
 5. Dashboard home (`GET /`): 4 tarjetas resumen (nº actividades por cuadrante Eisenhower, deliverables at-risk, actividades que necesitan info, secciones con riesgo de coordinación) enlazando a cada vista.
 
 **Criterios de aceptación:**
-- [ ] Swimlanes muestran conectores cross-sección del seed y al menos una anotación de diagnóstico.
-- [ ] Treemap: áreas proporcionales a person-days (verificar 2 secciones a mano).
-- [ ] Gantt: dependencia at-risk propaga al dependiente; ciclo en test no cuelga.
-- [ ] Filtros combinados funcionan y la URL resultante es recargable.
+- [x] Swimlanes muestran conectores cross-sección del seed y al menos una anotación de diagnóstico. (Finanzas: 5 conectores >3 → "riesgo de coordinación", verificado por curl contra `/org/swimlanes`)
+- [x] Treemap: áreas proporcionales a person-days (verificar 2 secciones a mano). (Finanzas 240pd → 483.18px, IT 2.5pd → 5.03px de 760px total con 377.5pd totales; `760×240/377.5=483.18` y `760×2.5/377.5=5.03`, verificado por curl contra cálculo manual)
+- [x] Gantt: dependencia at-risk propaga al dependiente; ciclo en test no cuelga. (`TestResolveAtRiskPropagatesTransitively`, `TestResolveAtRiskCycleDoesNotHang` con timeout de 2s en goroutine)
+- [x] Filtros combinados funcionan y la URL resultante es recargable. (query params `section`/`quadrant`/`from`/`to` combinables, `hx-push-url="true"` en el form de `/timeline`; verificado con curl combinando los 4 filtros a la vez)
+
+**Notas de implementación (decisiones no explicitadas por el plan):**
+- Los entregables (E1–E4) no tienen fecha de inicio, solo `due` — no hay "duración" que dibujar como barra. El Gantt se implementó como marcadores (círculos) por fecha de vencimiento en vez de barras, con flechas curvas de dependencia entre marcadores; se documenta aquí porque el plan asume "barras" sin aclarar que el modelo de datos no tiene fecha de inicio.
+- Los IDs de entregable (`DLV-001`, `DLV-002`...) se reinician por actividad, así que `depends_on` solo tiene sentido dentro de la misma actividad. El grafo de at-risk usa una clave global `ActivityID#DeliverableID` para no colisionar IDs de distintas actividades.
+- Detección de ciclos: `resolveAtRisk` (`internal/server/handlers_timeline.go`) usa un set "en curso" (no una pila con profundidad limitada) — si detecta que ya está resolviendo esa clave, corta la rama devolviendo `false` en vez de seguir. Cada entregable igual puede ser at-risk por su propia fecha aunque el ciclo no aporte nada.
+- Diagnóstico organizacional (`riesgo de coordinación`, `candidata a revisión`, huérfana) vive en `internal/server/handlers_org.go`, no en un paquete nuevo — sigue el patrón de `handlers_matrix.go` (helpers puros y testeables en el mismo paquete que los handlers) en vez de crear una capa `internal/org` no prevista en la arquitectura de `CLAUDE.md`.
+- El treemap es slice-and-dice de un solo eje (un único corte horizontal, altura constante): con ≤8 secciones configurables no se justifica alternar orientación por nivel (no hay jerarquía real, solo secciones planas), y mantiene el área directamente proporcional al ancho — más fácil de verificar a mano que un squarified.
+- El panel de detalle al hacer click en una tarjeta de swimlane o en una fila del timeline reutiliza el handler existente `/matrix/impact-effort/detail/{id}` (Fase 2) en vez de crear un panel de detalle nuevo — no hay requisito de auditabilidad distinto para estas vistas y evita duplicar la plantilla `detail_panel`.
+- El treemap enlaza a `/org/swimlanes?section=X` con navegación normal (`<a href>`, sin HTMX) — el criterio pedía "filtra el swimlane", no una actualización parcial, y una navegación simple ya deja la URL compartible/recargable.
+- Dashboard home (`GET /`) reemplaza el redirect anterior a `/activities`; se agregó el link "Inicio" al nav (antes no existía ninguna entrada para la raíz `/`).
+- Se borró `handlers_placeholder.go` y `placeholder.html.tmpl`: cubrían las 4 vistas de Fase 2/3 antes de implementarse y ya no les queda ningún caller tras esta fase (Fase 5 tarea 5, `/help`, se implementará con su propio handler cuando llegue).
 
 ### FASE 4 — Export + empaquetado + script Python opcional
 

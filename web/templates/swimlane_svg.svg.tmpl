@@ -1,0 +1,32 @@
+{{define "swimlane_svg"}}
+<svg viewBox="0 0 {{.Width}} {{.Height}}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="{{.AriaLabel}}" class="org-svg">
+  <title>{{.AriaLabel}}</title>
+
+  {{$width := .Width}}
+  {{range .Lanes}}
+  <rect x="0" y="{{.Y}}" width="{{$width}}" height="{{.Height}}" class="lane-bg"/>
+  <line x1="0" y1="{{.Y}}" x2="{{$width}}" y2="{{.Y}}" class="lane-sep"/>
+  <text x="8" y="{{.LabelY}}" class="lane-label">{{.Name}}</text>
+  {{range .Badges}}
+  <text x="8" y="{{.Y}}" class="lane-badge">{{.Text}}</text>
+  {{end}}
+  {{end}}
+
+  {{range .Connectors}}
+  <path d="{{.PathD}}" class="org-connector"/>
+  {{end}}
+
+  {{range $i, $c := .Cards}}
+  <g class="org-card" hx-get="{{$c.DetailURL}}" hx-target="#detail-panel" hx-swap="innerHTML" tabindex="0" role="button">
+    <clipPath id="cardclip-{{$i}}"><rect x="{{$c.X}}" y="{{$c.Y}}" width="{{$c.Width}}" height="{{$c.Height}}"/></clipPath>
+    <rect x="{{$c.X}}" y="{{$c.Y}}" width="{{$c.Width}}" height="{{$c.Height}}" rx="4" class="org-card-rect qchip-{{$c.Quadrant}}">
+      <title>{{$c.Name}} — {{impactEffortLabel $c.Quadrant}}</title>
+    </rect>
+    <g clip-path="url(#cardclip-{{$i}})">
+      <text x="{{$c.X}}" y="{{$c.Y}}" dx="6" dy="14" class="org-card-label">{{$c.Name}}</text>
+      <text x="{{$c.X}}" y="{{$c.Y}}" dx="6" dy="27" class="org-card-sub">{{impactEffortLabel $c.Quadrant}}</text>
+    </g>
+  </g>
+  {{end}}
+</svg>
+{{end}}
