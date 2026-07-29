@@ -94,6 +94,11 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /org/treemap", s.handleOrgTreemap)
 	s.mux.HandleFunc("GET /timeline", s.handleTimeline)
 	s.mux.HandleFunc("GET /timeline/svg", s.handleTimelineSVG)
+
+	s.mux.HandleFunc("POST /export/xlsx", s.handleExportXLSX)
+	s.mux.HandleFunc("GET /export/svg/{view}", s.handleExportSVG)
+	s.mux.HandleFunc("POST /export/backup", s.handleExportBackup)
+	s.mux.HandleFunc("POST /import", s.handleImport)
 }
 
 // isHX reporta si la petición viene de htmx (para decidir fragmento vs página completa).

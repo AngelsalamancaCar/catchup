@@ -9,7 +9,7 @@
 | 1 — Esqueleto, modelo, persistencia, cuestionario | ✅ Completa | `8e91312` |
 | 2 — Motor de scoring + matrices SVG | ✅ Completa | `dbdb633` |
 | 3 — Mapa organizacional + timeline | ✅ Completa | `feat(fase-3)`, ver `git log` |
-| 4 — Export + empaquetado + script Python | ⬜ Pendiente | — |
+| 4 — Export + empaquetado + script Python | ✅ Completa | `feat(fase-4)`, ver `git log` |
 | 5 — Piloto y calibración | ⬜ Pendiente | — |
 
 Detalle de qué se implementó y qué decisiones no explicitadas por el plan se tomaron en cada fase completada: ver "Notas de implementación" al final de cada fase en la §3. Guía de arquitectura para retomar el trabajo: `CLAUDE.md`.
@@ -254,9 +254,18 @@ type Deliverable struct {
 6. README.md: qué es, cómo ejecutar (doble click), dónde viven los datos, cómo respaldar, cómo importar backlog, FAQ del modelo localhost ("no es un servidor de red").
 
 **Criterios de aceptación:**
-- [ ] xlsx abre sin reparación en Excel; charts presentes; datos coinciden con la app.
-- [ ] Binario windows compilado desde el script arranca y funciona con solo el .exe + data.
-- [ ] Script Python importa un xlsx de prueba de 5 filas y las actividades aparecen (con flag "necesita info" activo porque faltan respuestas B–F: importar con F1=1).
+- [x] xlsx abre sin reparación en Excel; charts presentes; datos coinciden con la app. (verificado inspeccionando el .zip interno: 5 hojas — Actividades/Deliverables/Matriz IE/Eisenhower/Resumen — y 2 `chart{1,2}.xml`; celdas de ACT-001 coinciden con los scores calculados a mano en Fase 2)
+- [x] Binario windows compilado desde el script arranca y funciona con solo el .exe + data. (copiado a un directorio limpio sin el repo ni Go instalado — solo `pm.exe` + `data/seed.json` — arrancó con `-seed` y sirvió `/` y `/activities` con 200)
+- [x] Script Python importa un xlsx de prueba de 5 filas y las actividades aparecen (con flag "necesita info" activo porque faltan respuestas B–F: importar con F1=1). (5 filas → 5 actividades vía `POST /import`, Incertidumbre=100 confirmado en el detalle Eisenhower)
+
+**Notas de implementación (decisiones no explicitadas por el plan):**
+- Las líneas de umbral del scatter ("líneas de cuadrante") no tienen soporte nativo en excelize sobre un chart XY: se simulan con dos series adicionales de 2 puntos cada una, sin marcador y con línea fina, una horizontal (umbral Y) y una vertical (umbral X) — mismo truco que usa cualquier hoja de cálculo para dibujar una cruz de referencia sobre un scatter.
+- `buildPortfolioWorkbook(snap, now)` es puro respecto del Store (recibe una snapshot ya tomada), igual que `scoring.Compute` — permite testear la generación del xlsx sin levantar servidor HTTP (`handlers_export_test.go`).
+- Se agregó `POST /import` (no estaba en la lista de rutas original, pero la tarea 4 lo exige: "se importa vía `POST /import`") que acepta un upload multipart con un JSON `{"activities": [...]}` — o el Store completo, del que solo se usa `.activities` — y crea cada actividad vía `Store.CreateActivity` (que ya reasigna ID/timestamps, ignorando los del archivo). Vive en Configuración junto a los botones de export, con su propio archivo `handlers_import.go`.
+- `scripts/import_backlog.py` marca a propósito `f1=1` y `f2` con todas las claves B–D que rellenó con valores neutros (no solo deja `f1` bajo): es la única forma honesta de reflejar que esas respuestas las inventó el script, no la persona dueña de la actividad, y es lo que dispara el badge "necesita info" pedido por el criterio de aceptación.
+- El JSON que emite el script tiene la forma completa del Store (`sections`/`weights`/`thresholds`/`activities`), no solo la lista de actividades: así sirve tanto para `POST /import` (que ignora el resto de los campos) como para reemplazar directamente el archivo `-data` en una instalación nueva — cubre las dos vías que menciona la tarea 4 con un solo formato de salida. `scripts/README.md` advierte que la segunda vía pisa toda la configuración existente.
+- `build.sh`/`build.ps1` usan `CGO_ENABLED=0` explícito (aunque el proyecto ya no tiene CGO en ningún lado) para que quede documentado en el propio script por qué el binario no tiene dependencias de runtime en la máquina destino.
+- README.md quedó en español (a diferencia de CLAUDE.md, en inglés/mixto): está dirigido al usuario final de la app, no a un agente o desarrollador, y la UI misma ya está en español.
 
 ### FASE 5 — Piloto y calibración
 

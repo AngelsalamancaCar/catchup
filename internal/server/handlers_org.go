@@ -90,12 +90,11 @@ func isOrphanSection(sections []string, section string) bool {
 	return !contains(sections, section)
 }
 
-func (s *Server) handleOrgSwimlanes(w http.ResponseWriter, r *http.Request) {
+func (s *Server) buildOrgSwimlanesPageData(filter string) OrgSwimlanesPageData {
 	snap := s.store.Snapshot()
 	now := time.Now().UTC()
 	diag := computeSectionDiagnostics(snap, now)
 
-	filter := r.URL.Query().Get("section")
 	lanes := snap.Sections
 	activities := snap.Activities
 	if filter != "" {
@@ -129,11 +128,15 @@ func (s *Server) handleOrgSwimlanes(w http.ResponseWriter, r *http.Request) {
 	badges := diag.badgesFor(snap.Sections)
 	view := svg.BuildSwimlanes(lanes, cards, badges, "Mapa organizacional (swimlanes)")
 
-	s.renderFull(w, "org_swimlanes", OrgSwimlanesPageData{
+	return OrgSwimlanesPageData{
 		Title: "Organización — Swimlanes", Nav: "org",
 		FilterSection: filter,
 		SVG:           view,
-	})
+	}
+}
+
+func (s *Server) handleOrgSwimlanes(w http.ResponseWriter, r *http.Request) {
+	s.renderFull(w, "org_swimlanes", s.buildOrgSwimlanesPageData(r.URL.Query().Get("section")))
 }
 
 // OrgTreemapPageData es el contexto de /org/treemap.
@@ -142,7 +145,7 @@ type OrgTreemapPageData struct {
 	SVG        svg.TreemapView
 }
 
-func (s *Server) handleOrgTreemap(w http.ResponseWriter, r *http.Request) {
+func (s *Server) buildOrgTreemapPageData() OrgTreemapPageData {
 	snap := s.store.Snapshot()
 
 	totals := map[string]float64{}
@@ -169,8 +172,12 @@ func (s *Server) handleOrgTreemap(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	s.renderFull(w, "org_treemap", OrgTreemapPageData{
+	return OrgTreemapPageData{
 		Title: "Organización — Treemap", Nav: "org",
 		SVG: svg.BuildTreemap(areas, "Treemap organizacional por persona-días"),
-	})
+	}
+}
+
+func (s *Server) handleOrgTreemap(w http.ResponseWriter, r *http.Request) {
+	s.renderFull(w, "org_treemap", s.buildOrgTreemapPageData())
 }

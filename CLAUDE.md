@@ -20,6 +20,7 @@ go test ./internal/scoring/... -cover   # scoring package must stay >= 90% cover
 go test ./... -run TestName             # run a single test by name
 gofmt -l .                              # list files needing formatting (fix with gofmt -w)
 go run ./cmd/projectmapper -port 8787 -data data/projects.json -seed   # run locally
+./build.sh   # or build.ps1 — cross-compiles dist/projectmapper-{windows-amd64.exe,darwin-arm64,linux-amd64}
 ```
 
 There's no Makefile — the commands above are the whole toolchain. After any change, `go build ./...`, `go vet ./...`, and `go test ./...` must all pass cleanly before considering work done.
@@ -28,7 +29,7 @@ There's no Makefile — the commands above are the whole toolchain. After any ch
 
 ## Stack ceiling (do not add dependencies)
 
-Go stdlib + `github.com/xuri/excelize/v2` only (excelize is Phase 4/export-only, not yet added). Vendored HTMX (`web/static/htmx.min.js`, fetched once). Python is allowed only for the optional Phase 4 backlog-import script. **No Node, no JS framework, no router library, no ORM, no CGO, no SQLite** — the plan explicitly forbids reopening these decisions.
+Go stdlib + `github.com/xuri/excelize/v2` only (excelize is export-only, used from `internal/server/handlers_export.go`, never from `scoring`/`svg`). Vendored HTMX (`web/static/htmx.min.js`, fetched once). Python is allowed only for the optional Phase 4 backlog-import script (`scripts/import_backlog.py`). **No Node, no JS framework, no router library, no ORM, no CGO, no SQLite** — the plan explicitly forbids reopening these decisions.
 
 ## Architecture
 

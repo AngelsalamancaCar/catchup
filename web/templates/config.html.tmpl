@@ -36,4 +36,33 @@
     <button type="submit" class="btn" style="margin-top:0.75rem;">Guardar pesos</button>
   </form>
 </div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Exportar</h2>
+  <p class="hint">Genera un Excel con todas las hojas del portafolio, o un respaldo del JSON de datos. Ambos quedan también guardados en <code>export/</code>.</p>
+  <div class="actions">
+    <form method="post" action="/export/xlsx"><button type="submit" class="btn">Descargar Excel (.xlsx)</button></form>
+    <form method="post" action="/export/backup"><button type="submit" class="btn secondary">Descargar backup (.json)</button></form>
+  </div>
+  <p class="hint" style="margin-top:0.75rem;">Diagramas en SVG:
+    <a href="/export/svg/impact-effort">Impacto/Esfuerzo</a> ·
+    <a href="/export/svg/eisenhower">Eisenhower</a> ·
+    <a href="/export/svg/org-swimlanes">Swimlanes</a> ·
+    <a href="/export/svg/org-treemap">Treemap</a> ·
+    <a href="/export/svg/timeline">Timeline</a>
+  </p>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Importar backlog</h2>
+  <p class="hint">Sube el JSON generado por <code>scripts/import_backlog.py</code> (o cualquier archivo con la forma <code>{"activities": [...]}</code>).</p>
+  <form method="post" action="/import" enctype="multipart/form-data">
+    <div class="field">
+      <input type="file" name="file" accept=".json" required>
+    </div>
+    <button type="submit" class="btn">Importar</button>
+  </form>
+  {{if .ImportResult}}<p class="hint">{{.ImportResult}}</p>{{end}}
+  {{if .ImportErr}}<div class="error">{{.ImportErr}}</div>{{end}}
+</div>
 {{end}}
