@@ -45,11 +45,11 @@ func Y(score float64) float64 {
 // SectionPalette son los 8 colores fijos y accesibles para secciones
 // organizacionales (coincide con --section-1..8 de app.css).
 var SectionPalette = []string{
-	"#2f5d50", "#a3312a", "#2a5a8a", "#b5790a",
-	"#6a4c93", "#1b7a72", "#9c4668", "#4a5759",
+	"#0f6cbd", "#a4262c", "#038387", "#986f0b",
+	"#5c2e91", "#0b6a0b", "#b4009e", "#605e5c",
 }
 
-const orphanColor = "#8a8a82"
+const orphanColor = "#8a8886"
 
 func indexOf(list []string, v string) int {
 	for i, s := range list {
@@ -71,7 +71,7 @@ func SectionColor(sections []string, section string) string {
 }
 
 // strategicFitScale es la escala secuencial clara→oscura para colorear por B1.
-var strategicFitScale = []string{"#dbe8e3", "#a9c9bd", "#77aa97", "#458b71", "#2f5d50"}
+var strategicFitScale = []string{"#cfe4fa", "#96c6fa", "#479ef5", "#0f6cbd", "#0e4775"}
 
 // StrategicFitColor devuelve un color en escala secuencial según B1 (1-5).
 func StrategicFitColor(b1 int) string {
