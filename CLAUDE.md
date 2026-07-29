@@ -81,6 +81,14 @@ Single JSON file, guarded by one `sync.RWMutex`. Every mutating method (`CreateA
 
 Impact/Effort matrix defaults to showing only `Project`/`Workstream` activities; Eisenhower defaults to `Recurring`/`AdHoc`. Both have a `show_all=1` query param toggle. This filter is applied in the handler (`isImpactEffortType`/`isEisenhowerType` in `handlers_matrix.go`), not in `scoring` or `svg` — those packages stay activity-type-agnostic.
 
+### `/help` (plan §3 Fase 5, tarea 5)
+
+Static one-page user guide (`internal/server/handlers_help.go` + `web/templates/help.html.tmpl`), no query params or server-side state. It reuses the `anchors()` template func already used by the questionnaire wizard for the 1–5 scale descriptions, instead of re-typing them — if a scale anchor changes, `template_funcs.go` is the only place to edit and both the wizard and `/help` pick it up. The rest of the page (formulas, quadrant meanings, org diagnostics, timeline at-risk rule) is copied 1:1 from plan §2.2–§2.4 and §4, not from the proposal, since the plan is the exact-numbers source.
+
+### Seed data (`data/seed.json`)
+
+20 activities, 5 per `Type`, deliberately composed so the **default-filtered** view of both matrices (not just `show_all=1`) already shows all 4 quadrants: Impact/Effort needs Project/Workstream activities in Quick Wins, Major Projects, Fill-Ins, *and* Thankless Tasks; Eisenhower needs Recurring/AdHoc activities in Do, Schedule, Delegate, *and* Delete. Before the Fase 5 seed expansion, the default views had zero Quick Wins/Thankless Tasks and zero Schedule — worth checking again if activities are ever removed from the seed. It also exercises diagnostics that had no seed coverage: one activity (`ACT-020`) uses a `section` not present in the top-level `sections` list, to populate the orphaned-activity swimlane; two activities land in Legal as Thankless Tasks, to trigger the "candidata a revisión" section badge. If you add/remove seed activities, re-verify quadrant coverage by running the binary against a scratch `-data` path and inspecting `GET /matrix/impact-effort/svg` and `GET /matrix/eisenhower/svg` (each point's `<title>` includes its computed scores) rather than eyeballing the JSON.
+
 ## Conventions
 
 - UI language is Spanish; Go identifiers, comments in code, and commit messages are English/Spanish-mixed following what's already there — match the file you're editing.

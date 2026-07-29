@@ -55,6 +55,7 @@ func (s *Server) loadTemplates() {
 	s.mustParse("org_treemap", "templates/treemap_svg.svg.tmpl", "templates/org_treemap.html.tmpl")
 	s.mustParse("timeline", "templates/timeline_svg.svg.tmpl", "templates/timeline.html.tmpl")
 	s.mustParse("home", "templates/home.html.tmpl")
+	s.mustParse("help", "templates/help.html.tmpl")
 }
 
 func (s *Server) routes() {
@@ -65,6 +66,7 @@ func (s *Server) routes() {
 	s.mux.Handle("GET /static/", http.StripPrefix("/static/", http.FileServerFS(staticSub)))
 
 	s.mux.HandleFunc("GET /{$}", s.handleHome)
+	s.mux.HandleFunc("GET /help", s.handleHelp)
 
 	s.mux.HandleFunc("GET /activities", s.handleActivitiesList)
 	s.mux.HandleFunc("GET /activities/new", s.handleWizardNew)

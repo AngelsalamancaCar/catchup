@@ -10,7 +10,7 @@
 | 2 — Motor de scoring + matrices SVG | ✅ Completa | `dbdb633` |
 | 3 — Mapa organizacional + timeline | ✅ Completa | `feat(fase-3)`, ver `git log` |
 | 4 — Export + empaquetado + script Python | ✅ Completa | `feat(fase-4)`, ver `git log` |
-| 5 — Piloto y calibración | ⬜ Pendiente | — |
+| 5 — Piloto y calibración | 🟡 Parcial (tareas 1 y 5 completas; 2–4 requieren sesión con el usuario) | — |
 
 Detalle de qué se implementó y qué decisiones no explicitadas por el plan se tomaron en cada fase completada: ver "Notas de implementación" al final de cada fase en la §3. Guía de arquitectura para retomar el trabajo: `CLAUDE.md`.
 
@@ -278,7 +278,12 @@ type Deliverable struct {
 
 **Criterios de aceptación:**
 - [ ] Usuario valida que la clasificación de su backlog "se siente correcta" o los pesos se ajustaron hasta lograrlo.
-- [ ] `/help` accesible desde el nav.
+- [x] `/help` accesible desde el nav.
+
+**Notas de implementación:**
+- Tarea 1: seed ampliado de 8 a 20 actividades (5 por tipo). Las 12 nuevas se diseñaron para cerrar huecos que la vista por defecto tenía: Impacto/Esfuerzo (tipos Project/Workstream) no tenía ningún Quick Win ni Thankless Task; Eisenhower (tipos Recurring/AdHoc) no tenía ningún Agendar. Verificado corriendo el binario contra el seed: Impacto/Esfuerzo default queda Major×3/Fill-Ins×2/Quick Wins×3/Thankless×2, Eisenhower default queda Hacer×3/Agendar×2/Delegar×3/Eliminar×2. De paso se agregaron casos que ejercitan diagnósticos ya implementados pero sin cobertura en el seed: una actividad con sección no configurada ("Marketing", ACT-020) para la lane huérfana, y dos Thankless Tasks en Legal (ACT-010, ACT-013) para disparar "candidata a revisión".
+- Tarea 5: `/help` es una página estática (sin handler de estado) que reutiliza el func `anchors()` ya usado por el cuestionario, para no duplicar las anclas de escala en dos lugares. Contenido cubre tipos de actividad, fórmulas y cuadrantes de ambas matrices, overlay de información, diagnósticos organizacionales y regla at-risk del timeline — todo derivado 1:1 de §2.2–§2.4 y §4 de este documento.
+- Tareas 2–4 (cargar backlog real del usuario, calibrar pesos con su feedback, pulido UX post-piloto) requieren una sesión en vivo con datos reales del usuario; no se pueden completar de forma autónoma. Quedan pendientes hasta esa sesión.
 
 ---
 

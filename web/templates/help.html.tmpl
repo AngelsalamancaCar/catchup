@@ -1,0 +1,104 @@
+{{define "content"}}
+<h1>Guía rápida</h1>
+<p class="hint">Cómo se calcula cada score y qué significa cada cuadrante. Referencia de una página; el detalle completo de cada actividad siempre incluye el desglose auditable (respuesta → peso → contribución).</p>
+
+<div class="card">
+  <h2 style="margin-top:0;">Tipos de actividad</h2>
+  <p class="hint">El tipo decide en qué matriz aparece por defecto (con "mostrar todas" se puede ver cualquier tipo en cualquier matriz).</p>
+  <ul>
+    <li><strong>Project</strong> / <strong>Workstream</strong> — Matriz Impacto/Esfuerzo.</li>
+    <li><strong>Recurring</strong> / <strong>AdHoc</strong> — Matriz Eisenhower.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Matriz Impacto/Esfuerzo</h2>
+  <p class="hint">Impacto = promedio ponderado de B1–B4. Esfuerzo = promedio ponderado de C1–C4. Los pesos se ajustan en Configuración.</p>
+
+  <h3>Impacto (B1–B4)</h3>
+  <table class="breakdown-table">
+    <tbody>
+      <tr><th>B1 · Contribución a objetivos estratégicos</th></tr>
+      {{range anchors "b1"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+      <tr><th>B2 · Personas/usuarios afectados</th></tr>
+      {{range anchors "b2"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+      <tr><th>B3 · Efecto financiero o de valor</th></tr>
+      {{range anchors "b3"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+      <tr><th>B4 · Consecuencia de no hacerlo</th></tr>
+      {{range anchors "b4"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+    </tbody>
+  </table>
+
+  <h3>Esfuerzo (C1–C4)</h3>
+  <table class="breakdown-table">
+    <tbody>
+      <tr><th colspan="2">C1 · Persona-días estimados</th></tr>
+      <tr><td>&lt;5</td><td>5–20</td></tr>
+      <tr><td>20–60</td><td>60–120</td></tr>
+      <tr><td colspan="2">&gt;120</td></tr>
+      <tr><th colspan="2">C2 · Secciones que deben coordinar</th></tr>
+      {{range anchors "c2"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+      <tr><th colspan="2">C3 · Complejidad técnica o de proceso</th></tr>
+      {{range anchors "c3"}}<tr><td>{{.Value}}</td><td>{{.Anchor}}</td></tr>{{end}}
+      <tr><th colspan="2">C4 · Dependencias externas</th></tr>
+      <tr><td>Ninguna</td><td>Algunas</td></tr>
+      <tr><td colspan="2">Bloqueantes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Cuadrantes</h3>
+  <ul>
+    <li><strong>Quick Wins</strong> — impacto alto, esfuerzo bajo. Hacer primero.</li>
+    <li><strong>Major Projects</strong> — impacto alto, esfuerzo alto. Planificar con recursos dedicados.</li>
+    <li><strong>Fill-Ins</strong> — impacto bajo, esfuerzo bajo. Llenar huecos de capacidad.</li>
+    <li><strong>Thankless Tasks</strong> — impacto bajo, esfuerzo alto. Candidatas a delegar, simplificar o descartar.</li>
+  </ul>
+  <p class="hint">Los umbrales por defecto son 50/50 y se ajustan en Configuración. Un ítem con score a ±8 del umbral en cualquier eje se marca "en la frontera": la clasificación es sensible a un solo dato y conviene revisarlo a mano en vez de confiar ciegamente en el cuadrante.</p>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Matriz Eisenhower</h2>
+  <p class="hint">Urgencia = 60% proximidad del deadline (D1) + 40% costo de retraso (D2). Importancia = 60% B1 + 40% para quién importa (D3).</p>
+  <ul>
+    <li><strong>D1 · Deadline duro</strong> — sin fecha, la proximidad es 0; vencido, 100; si no, sube linealmente a medida que se acerca (0 a 60+ días antes, 100 el día de hoy).</li>
+    <li><strong>D2 · Efecto de retrasar 30 días</strong> — nada / fricción menor / escalamiento / incumplimiento o pérdida.</li>
+    <li><strong>D3 · A quién le importa</strong> — mía / compartida / de alguien más.</li>
+    <li><strong>D4 · ¿Un colega competente podría hacerlo con una breve instrucción?</strong> — usada solo para sugerir a quién delegar, no entra en el score.</li>
+  </ul>
+
+  <h3>Cuadrantes</h3>
+  <ul>
+    <li><strong>Hacer</strong> — urgente e importante.</li>
+    <li><strong>Agendar</strong> — importante, no urgente.</li>
+    <li><strong>Delegar</strong> — urgente, no importante. Si D4 es "sí" o "parcial", se sugieren candidatos de la misma sección.</li>
+    <li><strong>Eliminar</strong> — ni urgente ni importante.</li>
+  </ul>
+  <p class="hint">Igual que en Impacto/Esfuerzo, ±8 respecto al umbral marca un ítem "en la frontera".</p>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Necesita información</h2>
+  <p class="hint">Incertidumbre = (5 − F1) / 4 × 100, +10 por cada respuesta marcada como conjetura en F2 (tope 100).</p>
+  <ul>
+    <li><strong>ℹ Necesita info</strong> (borde punteado) — incertidumbre ≥ 50, o alguna respuesta marcada como conjetura. Antes de decidir, conviene resolver esa duda.</li>
+    <li><strong>Decide con lo que tienes</strong> — incertidumbre &lt; 25 e importancia &lt; 40. Seguir analizando esta actividad es esfuerzo perdido.</li>
+  </ul>
+  <p class="hint">El panel de "necesita información" ordena por Importancia × Incertidumbre: arriba quedan los casos donde averiguar más cambiaría más la decisión.</p>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Mapa organizacional</h2>
+  <ul>
+    <li><strong>Swimlanes</strong> — una fila por sección; los conectores entre filas muestran involucramiento cruzado (A5).</li>
+    <li><strong>Treemap</strong> — tamaño de sección proporcional a persona-días totales.</li>
+    <li><strong>Riesgo de coordinación</strong> — sección con más de 3 conectores cruzados.</li>
+    <li><strong>Candidata a revisión</strong> — sección con 2 o más Thankless Tasks.</li>
+    <li><strong>Huérfana</strong> — actividad cuya sección no está en la lista configurada.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <h2 style="margin-top:0;">Timeline de entregables</h2>
+  <p class="hint">Un entregable se marca <strong>at-risk</strong> si su estado no es "hecho" y vence antes de 14 días, o si depende (directa o transitivamente) de otro entregable en riesgo.</p>
+</div>
+{{end}}
