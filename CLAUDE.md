@@ -21,6 +21,8 @@ go test ./... -run TestName             # run a single test by name
 gofmt -l .                              # list files needing formatting (fix with gofmt -w)
 go run ./cmd/projectmapper -port 8787 -data data/projects.json -seed   # run locally
 ./build.sh   # or build.ps1 — cross-compiles dist/projectmapper-{windows-amd64.exe,darwin-arm64,linux-amd64}
+./scripts/install-shortcut.ps1 [-NoBuild|-Remove]   # Windows desktop/Start-Menu shortcut → %LOCALAPPDATA%\Catchup
+go run ./scripts/mkicon   # regenerates assets/catchup.ico (offline generator, only if the palette changes)
 ```
 
 There's no Makefile — the commands above are the whole toolchain. After any change, `go build ./...`, `go vet ./...`, and `go test ./...` must all pass cleanly before considering work done.
@@ -85,6 +87,14 @@ Impact/Effort matrix defaults to showing only `Project`/`Workstream` activities;
 
 Static one-page user guide (`internal/server/handlers_help.go` + `web/templates/help.html.tmpl`), no query params or server-side state. It reuses the `anchors()` template func already used by the questionnaire wizard for the 1–5 scale descriptions, instead of re-typing them — if a scale anchor changes, `template_funcs.go` is the only place to edit and both the wizard and `/help` pick it up. The rest of the page (formulas, quadrant meanings, org diagnostics, timeline at-risk rule) is copied 1:1 from plan §2.2–§2.4 and §4, not from the proposal, since the plan is the exact-numbers source.
 
+### Desktop launch path (`cmd/projectmapper/main.go` + `scripts/install-shortcut.ps1`)
+
+`scripts/install-shortcut.ps1` copies `dist/projectmapper-windows-amd64.exe` to `%LOCALAPPDATA%\Catchup\catchup.exe` and creates a `Catchup.lnk` (desktop + Start Menu) whose `Arguments` carry an **absolute** `-data` path and whose `WorkingDirectory` is the install dir — that's what keeps `exportDir` (relative, `handlers_export.go`) writing under the install dir instead of wherever the shortcut was launched from. The `.lnk` runs minimized (`WindowStyle = 7`) because the console window *is* the stop button; there is deliberately no `/quit` route and no `-H windowsgui` build.
+
+Because a shortcut-launched console disappears the instant the process exits, `main.go` never uses `log.Fatalf`: startup failures go through `fatal()`, which pauses on stdin (EOF-safe, so pipes and CI don't hang). And since the second double-click is the most likely failure, `main` binds via `net.Listen` before serving: if the port is taken, `alreadyRunning()` probes the home page for the layout's "Project Mapper" marker and, on a hit, just opens the browser at the live instance and exits 0.
+
+`assets/catchup.ico` is produced by `scripts/mkicon` — an **offline** stdlib-only generator (ICO container with embedded PNGs at 16/32/48/256) that reads its colors from `svg.SectionPalette`. It's committed, so neither the binary nor the installer depends on it; re-run `go run ./scripts/mkicon` only if the palette changes.
+
 ### Seed data (`data/seed.json`)
 
 20 activities, 5 per `Type`, deliberately composed so the **default-filtered** view of both matrices (not just `show_all=1`) already shows all 4 quadrants: Impact/Effort needs Project/Workstream activities in Quick Wins, Major Projects, Fill-Ins, *and* Thankless Tasks; Eisenhower needs Recurring/AdHoc activities in Do, Schedule, Delegate, *and* Delete. Before the Fase 5 seed expansion, the default views had zero Quick Wins/Thankless Tasks and zero Schedule — worth checking again if activities are ever removed from the seed. It also exercises diagnostics that had no seed coverage: one activity (`ACT-020`) uses a `section` not present in the top-level `sections` list, to populate the orphaned-activity swimlane; two activities land in Legal as Thankless Tasks, to trigger the "candidata a revisión" section badge. If you add/remove seed activities, re-verify quadrant coverage by running the binary against a scratch `-data` path and inspecting `GET /matrix/impact-effort/svg` and `GET /matrix/eisenhower/svg` (each point's `<title>` includes its computed scores) rather than eyeballing the JSON.
@@ -94,4 +104,4 @@ Static one-page user guide (`internal/server/handlers_help.go` + `web/templates/
 - UI language is Spanish; Go identifiers, comments in code, and commit messages are English/Spanish-mixed following what's already there — match the file you're editing.
 - Dates: `time.Time` UTC internally, `"2006-01-02"` on the wire (form fields, JSON, template output via the `fmtDate` template func).
 - Commit messages: `feat(fase-N): <summary>` per completed plan phase (see git log for the established tone/format).
-- Section colors: the 8-color palette in `internal/svg/geometry.go` (`SectionPalette`) and the CSS custom properties `--section-1..8` in `web/static/app.css` must stay in sync if either changes.
+- Section colors: the 5-color mono-accent palette in `internal/svg/geometry.go` (`SectionPalette`) and the CSS custom properties `--section-1..5` in `web/static/app.css` must stay in sync if either changes.

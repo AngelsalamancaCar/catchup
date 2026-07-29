@@ -4,6 +4,8 @@
 // que la plantilla la interpole sin hacer aritmética.
 package svg
 
+import "strconv"
+
 // Dimensiones del lienzo y márgenes del área de ploteo, en unidades de
 // viewBox (equivalentes a px).
 const (
@@ -42,14 +44,15 @@ func Y(score float64) float64 {
 	return PadTop + (1-clamp01(score))*plotHeight()
 }
 
-// SectionPalette son los 8 colores fijos y accesibles para secciones
-// organizacionales (coincide con --section-1..8 de app.css).
+// SectionPalette son los 5 colores fijos para secciones organizacionales:
+// el ciclo mono-accent accent-400 → neutral-400 → accent-600 → neutral-600
+// → accent-800 del design system Nocturne (coincide con --section-1..5 de
+// app.css).
 var SectionPalette = []string{
-	"#0f6cbd", "#a4262c", "#038387", "#986f0b",
-	"#5c2e91", "#0b6a0b", "#b4009e", "#605e5c",
+	"#b5abfc", "#b2b6ca", "#796cbf", "#75798c", "#423a6a",
 }
 
-const orphanColor = "#8a8886"
+const orphanColor = "#595d6c"
 
 func indexOf(list []string, v string) int {
 	for i, s := range list {
@@ -70,8 +73,16 @@ func SectionColor(sections []string, section string) string {
 	return SectionPalette[idx%len(SectionPalette)]
 }
 
-// strategicFitScale es la escala secuencial clara→oscura para colorear por B1.
-var strategicFitScale = []string{"#cfe4fa", "#96c6fa", "#479ef5", "#0f6cbd", "#0e4775"}
+// strategicFitScale es la escala secuencial clara→oscura para colorear por
+// B1: sube de neutral claro a accent oscuro, mono-accent (sin tonos
+// inventados) — coincide con FitPalette expuesto a los templates.
+var strategicFitScale = []string{"#e4e7f5", "#b2b6ca", "#968ae0", "#796cbf", "#423a6a"}
+
+// FitPalette expone la escala de fit estratégico (B1) para que la leyenda
+// del template no duplique los hex a mano.
+func FitPalette() []string {
+	return strategicFitScale
+}
 
 // StrategicFitColor devuelve un color en escala secuencial según B1 (1-5).
 func StrategicFitColor(b1 int) string {
@@ -94,4 +105,56 @@ func PointRadius(band string) float64 {
 		return r
 	}
 	return 6
+}
+
+// textOnDark y textOnLight son los tokens de texto Nocturne usados como
+// contraste sobre un fill de color arbitrario (paleta de secciones).
+const (
+	textOnDark  = "#e9e9ed" // --color-text
+	textOnLight = "#161826" // --color-bg
+)
+
+// TextOnColor devuelve el color de texto (claro u oscuro) legible sobre un
+// fill hexadecimal dado, por luminancia relativa aproximada. Necesario
+// porque SectionPalette mezcla tonos claros y oscuros de los ramps accent/
+// neutral (mono-accent), así que un solo color de texto fijo no sirve para
+// todos (usado por treemap y tarjetas organizacionales de sección).
+func TextOnColor(hex string) string {
+	r, g, b, ok := parseHexRGB(hex)
+	if !ok {
+		return textOnDark
+	}
+	brightness := (299*r + 587*g + 114*b) / 1000
+	if brightness > 140 {
+		return textOnLight
+	}
+	return textOnDark
+}
+
+func parseHexRGB(hex string) (r, g, b int, ok bool) {
+	hex = trimHash(hex)
+	if len(hex) != 6 {
+		return 0, 0, 0, false
+	}
+	var vals [3]int
+	for i := range 3 {
+		v, err := hexByte(hex[i*2 : i*2+2])
+		if err != nil {
+			return 0, 0, 0, false
+		}
+		vals[i] = v
+	}
+	return vals[0], vals[1], vals[2], true
+}
+
+func trimHash(s string) string {
+	if len(s) > 0 && s[0] == '#' {
+		return s[1:]
+	}
+	return s
+}
+
+func hexByte(s string) (int, error) {
+	v, err := strconv.ParseUint(s, 16, 16)
+	return int(v), err
 }

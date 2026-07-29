@@ -1,10 +1,8 @@
 {{define "content"}}
-<div class="card">
-  <h1>Timeline de entregables</h1>
-  <p class="hint">{{.Count}} de {{.TotalCount}} entregables mostrados.</p>
-</div>
+<h1 style="margin:0">Timeline de entregables</h1>
+<p class="hint">{{.Count}} de {{.TotalCount}} entregables mostrados.</p>
 
-<div class="card">
+<div class="card elev-sm" style="margin-top:var(--space-4)">
   <form hx-get="/timeline/svg" hx-target="#timeline-container" hx-swap="innerHTML" hx-trigger="change" hx-push-url="true">
     {{$filterSections := .Filters.Sections}}
     {{$filterQuadrants := .Filters.Quadrants}}
@@ -24,31 +22,31 @@
         {{end}}
       </div>
     </div>
-    <div class="threshold-controls">
+    <div class="threshold-controls" style="max-width:400px">
       <div class="field">
         <label>Desde</label>
-        <input type="date" name="from" value="{{.Filters.From}}">
+        <input class="input" type="date" name="from" value="{{.Filters.From}}">
       </div>
       <div class="field">
         <label>Hasta</label>
-        <input type="date" name="to" value="{{.Filters.To}}">
+        <input class="input" type="date" name="to" value="{{.Filters.To}}">
       </div>
     </div>
   </form>
 </div>
 
-<div class="matrix-layout">
+<div class="matrix-layout" style="margin-top:var(--space-4)">
   <div id="timeline-container">
   {{template "timeline_container" .}}
   </div>
-  <div id="detail-panel" class="card detail-panel">
-    <p class="hint">Haz click en un entregable para ver el desglose de scores de su actividad.</p>
+  <div id="detail-panel" class="card elev-sm detail-panel">
+    <p class="card-body">Haz click en un entregable para ver el desglose de scores de su actividad.</p>
   </div>
 </div>
 {{end}}
 
 {{define "timeline_container"}}
-<div class="card">
+<div class="card elev-sm">
   {{template "timeline_svg" .SVG}}
   <div class="legend">
     <span class="legend-item"><span class="legend-dot status-not_started"></span>No iniciado</span>

@@ -1,39 +1,39 @@
 {{define "content"}}
-<div class="card" style="display:flex;justify-content:space-between;align-items:center;">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4)">
   <div>
-    <h1>Actividades</h1>
+    <h1 style="margin:0">Actividades</h1>
     <p class="hint">{{len .Activities}} actividad(es) registradas.</p>
   </div>
-  <a class="btn" href="/activities/new">+ Nueva actividad</a>
+  <a class="btn btn-primary" href="/activities/new">+ Nueva actividad</a>
 </div>
-<div id="activities-table">
+<div id="activities-table" style="margin-top:var(--space-4)">
 {{template "activities_table" .}}
 </div>
 {{end}}
 
 {{define "activities_table"}}
-<div class="card">
+<div class="card elev-sm" style="padding:0;overflow:hidden">
 {{if not .Activities}}
-  <p class="hint">Todavía no hay actividades. Crea la primera con "+ Nueva actividad".</p>
+  <p class="card-body" style="padding:var(--space-4)">Todavía no hay actividades. Crea la primera con "+ Nueva actividad".</p>
 {{else}}
-  <table>
+  <table class="table">
     <thead>
       <tr>
-        <th>Nombre</th><th>Tipo</th><th>Sección</th><th>Owner</th><th>Impacto</th><th>Esfuerzo</th><th></th>
+        <th style="padding-left:var(--space-4)">Nombre</th><th>Tipo</th><th>Sección</th><th>Owner</th><th>Impacto</th><th>Esfuerzo</th><th></th>
       </tr>
     </thead>
     <tbody>
       {{range .Activities}}
       <tr>
-        <td><a href="/activities/{{.ID}}/edit">{{.Name}}</a></td>
+        <td style="padding-left:var(--space-4)"><a href="/activities/{{.ID}}/edit">{{.Name}}</a></td>
         <td>{{.Type}}</td>
         <td>{{.Section}}</td>
         <td>{{.Owner}}</td>
         <td>—</td>
         <td>—</td>
-        <td class="actions">
-          <a class="btn small secondary" href="/activities/{{.ID}}/edit">Editar</a>
-          <button class="btn small danger"
+        <td style="text-align:right;padding-right:var(--space-4);white-space:nowrap">
+          <a class="btn btn-secondary btn-small" href="/activities/{{.ID}}/edit">Editar</a>
+          <button class="btn btn-ghost btn-small"
                   hx-delete="/activities/{{.ID}}"
                   hx-confirm="¿Borrar la actividad &quot;{{.Name}}&quot;? Esta acción no se puede deshacer."
                   hx-target="#activities-table"

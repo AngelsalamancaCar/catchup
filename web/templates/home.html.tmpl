@@ -1,11 +1,12 @@
 {{define "content"}}
-<h1>Project Mapper</h1>
-<p class="hint">Resumen rápido del portafolio.</p>
-<div class="dashboard-grid">
+<h1 style="margin:0">Project Mapper</h1>
+<p class="hint" style="max-width:640px">Resumen rápido del portafolio: clasificación por impacto, esfuerzo y coordinación organizacional, calculada en vivo a partir del cuestionario.</p>
+<div class="dashboard-grid" style="margin-top:var(--space-6)">
   {{range .Cards}}
-  <a class="card dashboard-card" href="{{.Link}}">
-    <h2 style="margin-top:0;">{{.Title}}</h2>
-    {{range .Lines}}<p>{{.}}</p>{{end}}
+  <a class="card elev-sm dashboard-card" href="{{.Link}}">
+    <div class="card-title">{{.Title}}</div>
+    {{range .Lines}}<p class="card-body">{{.}}</p>{{end}}
+    <div class="card-meta">Ver detalle →</div>
   </a>
   {{end}}
 </div>

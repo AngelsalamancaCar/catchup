@@ -6,8 +6,8 @@
     <rect x="{{.X}}" y="{{.Y}}" width="{{.Width}}" height="{{.Height}}" fill="{{.Color}}" class="treemap-rect">
       <title>{{.Name}} — {{pct .Value}} persona-días</title>
     </rect>
-    <text x="{{.LabelX}}" y="{{.LabelY}}" text-anchor="middle" class="treemap-label">{{.Name}}</text>
-    <text x="{{.LabelX}}" y="{{.LabelY}}" dy="16" text-anchor="middle" class="treemap-sub">{{pct .Value}} pd</text>
+    <text x="{{.LabelX}}" y="{{.LabelY}}" text-anchor="middle" class="treemap-label" fill="{{.TextColor}}">{{.Name}}</text>
+    <text x="{{.LabelX}}" y="{{.LabelY}}" dy="16" text-anchor="middle" class="treemap-sub" fill="{{.TextColor}}">{{pct .Value}} pd</text>
   </a>
   {{end}}
 </svg>

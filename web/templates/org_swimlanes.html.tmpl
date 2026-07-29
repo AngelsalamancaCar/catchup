@@ -1,21 +1,24 @@
 {{define "content"}}
-<div class="card">
-  <h1>Organización</h1>
-  <div class="org-tabs">
-    <a class="btn small" href="/org/swimlanes">Swimlanes</a>
-    <a class="btn small secondary" href="/org/treemap">Treemap</a>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4)">
+  <div>
+    <h1 style="margin:0">Organización</h1>
+    <p class="hint">Swimlanes por sección, con conectores de involucramiento cruzado (A5).</p>
   </div>
-  {{if .FilterSection}}
-  <p class="hint">Filtrando por sección: <strong>{{.FilterSection}}</strong> — <a href="/org/swimlanes">quitar filtro</a></p>
-  {{end}}
+  <div class="seg">
+    <a aria-current="true" href="/org/swimlanes">Swimlanes</a>
+    <a href="/org/treemap">Treemap</a>
+  </div>
 </div>
+{{if .FilterSection}}
+<p class="hint">Filtrando por sección: <strong>{{.FilterSection}}</strong> — <a href="/org/swimlanes">quitar filtro</a></p>
+{{end}}
 
-<div class="matrix-layout">
-  <div class="card">
+<div class="matrix-layout" style="margin-top:var(--space-4)">
+  <div class="card elev-sm">
     {{template "swimlane_svg" .SVG}}
   </div>
-  <div id="detail-panel" class="card detail-panel">
-    <p class="hint">Haz click en una tarjeta para ver su desglose de scores.</p>
+  <div id="detail-panel" class="card elev-sm detail-panel">
+    <p class="card-body">Haz click en una tarjeta para ver su desglose de scores.</p>
   </div>
 </div>
 {{end}}

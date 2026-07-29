@@ -16,9 +16,13 @@ type SectionAreaInput struct {
 // RenderedRect es un rectángulo del treemap ya proyectado a píxeles.
 type RenderedRect struct {
 	Name, Color, DetailURL string
-	Value                  float64
-	X, Y, Width, Height    float64
-	LabelX, LabelY         float64
+	// TextColor es el color de texto legible sobre Color (ver TextOnColor):
+	// SectionPalette mezcla tonos claros y oscuros, así que hace falta
+	// elegirlo por rectángulo en vez de fijarlo en CSS.
+	TextColor           string
+	Value               float64
+	X, Y, Width, Height float64
+	LabelX, LabelY      float64
 }
 
 // TreemapView es la vista completamente precomputada del treemap.
@@ -48,7 +52,7 @@ func BuildTreemap(sections []SectionAreaInput, ariaLabel string) TreemapView {
 	for _, s := range sections {
 		w := TreemapWidth * s.Value / total
 		view.Rects = append(view.Rects, RenderedRect{
-			Name: s.Name, Color: s.Color, DetailURL: s.DetailURL, Value: s.Value,
+			Name: s.Name, Color: s.Color, TextColor: TextOnColor(s.Color), DetailURL: s.DetailURL, Value: s.Value,
 			X: x, Y: 0, Width: w, Height: TreemapHeight,
 			LabelX: x + w/2, LabelY: TreemapHeight / 2,
 		})

@@ -1,6 +1,7 @@
 {{define "content"}}
-<h1>{{if eq .Mode "edit"}}Editar actividad{{else}}Nueva actividad{{end}}</h1>
-<div id="wizard">
+<h1 style="margin:0">{{if eq .Mode "edit"}}Editar actividad{{else}}Nueva actividad{{end}}</h1>
+<p class="hint">Completa los pasos 1 a 6. Los campos marcados son obligatorios.</p>
+<div id="wizard" style="margin-top:var(--space-4)">
 {{template "step1" .}}
 </div>
 {{end}}
@@ -68,16 +69,16 @@
 
 {{define "step1"}}
 <div class="steps"><span class="current">1. Identificación</span> · 2. Impacto · 3. Esfuerzo · 4. Urgencia/Importancia · 5. Entregables · 6. Info</div>
-<form class="card" hx-post="/activities/wizard/step2" hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" hx-post="/activities/wizard/step2" hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}
   <div class="field {{if .Errors.name}}has-error{{end}}">
     <label>A1. Nombre de la actividad</label>
-    <input type="text" name="name" value="{{.Name}}" autofocus>
+    <input class="input" type="text" name="name" value="{{.Name}}" autofocus>
     {{if .Errors.name}}<div class="error">{{.Errors.name}}</div>{{end}}
   </div>
   <div class="field {{if .Errors.type}}has-error{{end}}">
     <label>A2. Tipo</label>
-    <select name="type">
+    <select class="input" name="type">
       <option value="">-- selecciona --</option>
       <option value="Project" {{if eq .Type "Project"}}selected{{end}}>Proyecto</option>
       <option value="Workstream" {{if eq .Type "Workstream"}}selected{{end}}>Workstream</option>
@@ -88,12 +89,12 @@
   </div>
   <div class="field {{if .Errors.owner}}has-error{{end}}">
     <label>A3. Owner (responsable)</label>
-    <input type="text" name="owner" value="{{.Owner}}">
+    <input class="input" type="text" name="owner" value="{{.Owner}}">
     {{if .Errors.owner}}<div class="error">{{.Errors.owner}}</div>{{end}}
   </div>
   <div class="field {{if .Errors.section}}has-error{{end}}">
     <label>A4. Sección responsable</label>
-    <select name="section">
+    <select class="input" name="section">
       <option value="">-- selecciona --</option>
       {{$sec := .Section}}
       {{range .Sections}}<option value="{{.}}" {{if eq $sec .}}selected{{end}}>{{.}}</option>{{end}}
@@ -111,37 +112,35 @@
   </div>
   <div class="field">
     <label>A6. Descripción / objetivo</label>
-    <textarea name="description">{{.Description}}</textarea>
+    <textarea class="input" name="description">{{.Description}}</textarea>
   </div>
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">Siguiente →</button>
+    <button type="submit" class="btn btn-primary">Siguiente →</button>
   </div>
 </form>
 {{end}}
 
 {{define "step2"}}
 <div class="steps">1. Identificación · <span class="current">2. Impacto</span> · 3. Esfuerzo · 4. Urgencia/Importancia · 5. Entregables · 6. Info</div>
-<form class="card" hx-post="/activities/wizard/step3" hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" hx-post="/activities/wizard/step3" hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}{{template "hidden_A" .}}
   {{template "radio5" dict "Name" "b1" "Label" "B1. Contribución a objetivos estratégicos" "Value" .B1 "Error" .Errors.b1}}
   {{template "radio5" dict "Name" "b2" "Label" "B2. Nº de stakeholders/usuarios afectados" "Value" .B2 "Error" .Errors.b2}}
   {{template "radio5" dict "Name" "b3" "Label" "B3. Efecto financiero o de valor" "Value" .B3 "Error" .Errors.b3}}
   {{template "radio5" dict "Name" "b4" "Label" "B4. Consecuencia de no hacerlo" "Value" .B4 "Error" .Errors.b4}}
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">Siguiente →</button>
+    <button type="submit" class="btn btn-primary">Siguiente →</button>
   </div>
 </form>
 {{end}}
 
 {{define "step3"}}
 <div class="steps">1. Identificación · 2. Impacto · <span class="current">3. Esfuerzo</span> · 4. Urgencia/Importancia · 5. Entregables · 6. Info</div>
-<form class="card" hx-post="/activities/wizard/step4" hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" hx-post="/activities/wizard/step4" hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}{{template "hidden_A" .}}{{template "hidden_B" .}}
   <div class="field {{if .Errors.c1}}has-error{{end}}">
     <label>C1. Esfuerzo estimado (persona-días)</label>
-    <select name="c1">
+    <select class="input" name="c1">
       <option value="">-- selecciona --</option>
       <option value="<5" {{if eq .C1 "<5"}}selected{{end}}>Menos de 5</option>
       <option value="5-20" {{if eq .C1 "5-20"}}selected{{end}}>5 a 20</option>
@@ -155,7 +154,7 @@
   {{template "radio5" dict "Name" "c3" "Label" "C3. Complejidad técnica o procedural" "Value" .C3 "Error" .Errors.c3}}
   <div class="field {{if .Errors.c4}}has-error{{end}}">
     <label>C4. Dependencias externas</label>
-    <select name="c4">
+    <select class="input" name="c4">
       <option value="">-- selecciona --</option>
       <option value="none" {{if eq .C4 "none"}}selected{{end}}>Ninguna</option>
       <option value="some" {{if eq .C4 "some"}}selected{{end}}>Algunas</option>
@@ -164,20 +163,19 @@
     {{if .Errors.c4}}<div class="error">{{.Errors.c4}}</div>{{end}}
   </div>
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">Siguiente →</button>
+    <button type="submit" class="btn btn-primary">Siguiente →</button>
   </div>
 </form>
 {{end}}
 
 {{define "step4"}}
 <div class="steps">1. Identificación · 2. Impacto · 3. Esfuerzo · <span class="current">4. Urgencia/Importancia</span> · 5. Entregables · 6. Info</div>
-<form class="card" hx-post="/activities/wizard/step5" hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" hx-post="/activities/wizard/step5" hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}{{template "hidden_A" .}}{{template "hidden_B" .}}{{template "hidden_C" .}}
   <div class="field {{if .Errors.d1}}has-error{{end}}">
     <label>D1. Fecha límite (deadline)</label>
-    <input type="date" name="d1" value="{{.D1}}" {{if .NoDeadline}}disabled{{end}}>
-    <label class="checkbox-row" style="font-weight:400;margin-top:0.4rem;">
+    <input class="input" type="date" name="d1" value="{{.D1}}" {{if .NoDeadline}}disabled{{end}}>
+    <label class="checkbox-row" style="margin-top:6px">
       <input type="checkbox" name="no_deadline" value="on" {{if .NoDeadline}}checked{{end}}
         onchange="this.form.d1.disabled = this.checked; if(this.checked) this.form.d1.value='';">
       Sin deadline
@@ -186,7 +184,7 @@
   </div>
   <div class="field {{if .Errors.d2}}has-error{{end}}">
     <label>D2. ¿Qué pasa si se retrasa 30 días?</label>
-    <select name="d2">
+    <select class="input" name="d2">
       <option value="">-- selecciona --</option>
       <option value="nothing" {{if eq .D2 "nothing"}}selected{{end}}>Nada</option>
       <option value="friction" {{if eq .D2 "friction"}}selected{{end}}>Fricción menor</option>
@@ -197,7 +195,7 @@
   </div>
   <div class="field {{if .Errors.d3}}has-error{{end}}">
     <label>D3. ¿Es importante para tus objetivos o para los de otra persona?</label>
-    <select name="d3">
+    <select class="input" name="d3">
       <option value="">-- selecciona --</option>
       <option value="mine" {{if eq .D3 "mine"}}selected{{end}}>Míos</option>
       <option value="shared" {{if eq .D3 "shared"}}selected{{end}}>Compartidos</option>
@@ -207,7 +205,7 @@
   </div>
   <div class="field {{if .Errors.d4}}has-error{{end}}">
     <label>D4. ¿Un colega competente podría hacerlo con un briefing corto?</label>
-    <select name="d4">
+    <select class="input" name="d4">
       <option value="">-- selecciona --</option>
       <option value="yes" {{if eq .D4 "yes"}}selected{{end}}>Sí</option>
       <option value="partial" {{if eq .D4 "partial"}}selected{{end}}>Parcialmente</option>
@@ -216,8 +214,7 @@
     {{if .Errors.d4}}<div class="error">{{.Errors.d4}}</div>{{end}}
   </div>
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">Siguiente →</button>
+    <button type="submit" class="btn btn-primary">Siguiente →</button>
   </div>
 </form>
 {{end}}
@@ -226,15 +223,15 @@
 <div class="deliverable-row">
   <div class="field">
     <label>Nombre</label>
-    <input type="text" name="deliverables[{{.Index}}].name" value="{{.Name}}">
+    <input class="input" type="text" name="deliverables[{{.Index}}].name" value="{{.Name}}">
   </div>
   <div class="field">
     <label>Fecha</label>
-    <input type="date" name="deliverables[{{.Index}}].due" value="{{.Due}}">
+    <input class="input" type="date" name="deliverables[{{.Index}}].due" value="{{.Due}}">
   </div>
   <div class="field">
     <label>Estado</label>
-    <select name="deliverables[{{.Index}}].status">
+    <select class="input" name="deliverables[{{.Index}}].status">
       <option value="not_started" {{if eq .Status "not_started"}}selected{{end}}>No iniciado</option>
       <option value="in_progress" {{if eq .Status "in_progress"}}selected{{end}}>En progreso</option>
       <option value="at_risk" {{if eq .Status "at_risk"}}selected{{end}}>En riesgo</option>
@@ -243,39 +240,38 @@
   </div>
   <div class="field">
     <label>Depende de (ID)</label>
-    <input type="text" name="deliverables[{{.Index}}].depends_on" value="{{.DependsOn}}" placeholder="opcional">
+    <input class="input" type="text" name="deliverables[{{.Index}}].depends_on" value="{{.DependsOn}}" placeholder="opcional">
   </div>
 </div>
 {{end}}
 
 {{define "deliverable_add_button"}}
-<button type="button" id="add-deliverable-btn" hx-swap-oob="true" class="btn small secondary"
+<button type="button" id="add-deliverable-btn" hx-swap-oob="true" class="btn btn-secondary btn-small"
   hx-get="/activities/wizard/deliverable-row?index={{.NextIndex}}"
   hx-target="#deliverable-rows" hx-swap="beforeend">+ Deliverable</button>
 {{end}}
 
 {{define "step5"}}
 <div class="steps">1. Identificación · 2. Impacto · 3. Esfuerzo · 4. Urgencia/Importancia · <span class="current">5. Entregables</span> · 6. Info</div>
-<form class="card" hx-post="/activities/wizard/step6" hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" hx-post="/activities/wizard/step6" hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}{{template "hidden_A" .}}{{template "hidden_B" .}}{{template "hidden_C" .}}{{template "hidden_D" .}}
   <p class="hint">Sección E — opcional: añade tantos entregables como necesites.</p>
   {{range .Errors}}<div class="error">{{.}}</div>{{end}}
   <div id="deliverable-rows">
     {{range .Deliverables}}{{template "deliverable_row" .}}{{end}}
   </div>
-  <button type="button" id="add-deliverable-btn" class="btn small secondary"
+  <button type="button" id="add-deliverable-btn" class="btn btn-secondary btn-small"
     hx-get="/activities/wizard/deliverable-row?index={{len .Deliverables}}"
     hx-target="#deliverable-rows" hx-swap="beforeend">+ Deliverable</button>
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">Siguiente →</button>
+    <button type="submit" class="btn btn-primary">Siguiente →</button>
   </div>
 </form>
 {{end}}
 
 {{define "step6"}}
 <div class="steps">1. Identificación · 2. Impacto · 3. Esfuerzo · 4. Urgencia/Importancia · 5. Entregables · <span class="current">6. Info</span></div>
-<form class="card" {{if eq .Mode "edit"}}hx-put="/activities/{{.ActivityID}}"{{else}}hx-post="/activities"{{end}} hx-target="#wizard" hx-swap="innerHTML">
+<form class="card elev-sm" {{if eq .Mode "edit"}}hx-put="/activities/{{.ActivityID}}"{{else}}hx-post="/activities"{{end}} hx-target="#wizard" hx-swap="innerHTML">
   {{template "hidden_meta" .}}{{template "hidden_A" .}}{{template "hidden_B" .}}{{template "hidden_C" .}}{{template "hidden_D" .}}{{template "hidden_E" .}}
   {{template "radio5" dict "Name" "f1" "Label" "F1. Confianza en las estimaciones anteriores" "Value" .F1 "Error" .Errors.f1}}
   <div class="field">
@@ -289,18 +285,17 @@
   </div>
   <div class="field">
     <label>F3. ¿Qué información falta y quién la tiene?</label>
-    <textarea name="f3">{{.F3}}</textarea>
+    <textarea class="input" name="f3">{{.F3}}</textarea>
   </div>
   <div class="wizard-actions">
-    <span></span>
-    <button type="submit" class="btn">{{if eq .Mode "edit"}}Guardar cambios{{else}}Guardar actividad{{end}}</button>
+    <button type="submit" class="btn btn-primary">{{if eq .Mode "edit"}}Guardar cambios{{else}}Guardar actividad{{end}}</button>
   </div>
 </form>
 {{end}}
 
 {{define "wizard_error"}}
-<div class="card">
+<div class="card elev-sm">
   <p class="error">{{.Message}}</p>
-  <a class="btn" href="/activities/new">Volver a empezar</a>
+  <a class="btn btn-primary" href="/activities/new">Volver a empezar</a>
 </div>
 {{end}}

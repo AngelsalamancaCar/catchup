@@ -83,6 +83,24 @@ func anchors(question string) []ScaleOption {
 	return out
 }
 
+// FitLegendEntry es una entrada de la leyenda "color por fit estratégico"
+// (B1 1-5 con su color de la escala secuencial).
+type FitLegendEntry struct {
+	Value int
+	Color string
+}
+
+// fitLegend arma la leyenda de StrategicFitColor (B1 1-5) para que el
+// template no duplique los hex a mano ni haga aritmética de índices.
+func fitLegend() []FitLegendEntry {
+	palette := svg.FitPalette()
+	out := make([]FitLegendEntry, len(palette))
+	for i, c := range palette {
+		out[i] = FitLegendEntry{Value: i + 1, Color: c}
+	}
+	return out
+}
+
 // dict construye un map[string]any a partir de pares clave/valor, para pasar
 // varios parámetros a un sub-template.
 func dict(values ...any) (map[string]any, error) {
@@ -170,6 +188,7 @@ func funcMap() template.FuncMap {
 		"d2Label":           d2Label,
 		"c4Label":           c4Label,
 		"sectionColor":      svg.SectionColor,
+		"fitLegend":         fitLegend,
 		"impactEffortLabel": scoring.ImpactEffortLabel,
 		"eisenhowerLabel":   scoring.EisenhowerLabel,
 	}

@@ -87,6 +87,42 @@ Si no tienes Python, también puedes crear las actividades a mano vía el
 cuestionario — el script es una comodidad opcional, no un requisito (§2.1 de
 la propuesta original).
 
+## Atajo en el escritorio (Windows)
+
+```powershell
+./scripts/install-shortcut.ps1
+```
+
+Compila, copia el binario a `%LOCALAPPDATA%\Catchup\catchup.exe` y crea el atajo
+**Catchup** en el escritorio y en el menú Inicio (así aparece al escribir
+"catchup" en el buscador de Windows). Doble click abre el navegador en
+`http://127.0.0.1:8787`.
+
+- **Los datos viven en `%LOCALAPPDATA%\Catchup\data\projects.json`** y los
+  exports en `%LOCALAPPDATA%\Catchup\export\` — fuera del repo, así que
+  recompilar, hacer `git clean` o borrar `dist/` no los toca. El atajo pasa esa
+  ruta absoluta, no depende del directorio desde donde se lance.
+- **Para detener la app, cerrá la ventana de consola** que queda minimizada en
+  la barra de tareas (o Ctrl+C en ella). El atajo la abre minimizada justamente
+  para que sirva de interruptor.
+- **Un segundo doble click no rompe nada**: si ya hay una instancia corriendo en
+  ese puerto, la nueva solo abre el navegador en la que ya está viva y sale.
+- Se puede volver a correr después de cada rebuild — es idempotente y nunca
+  sobreescribe `projects.json`. Si la app está abierta, avisa que la cierres
+  primero (Windows no deja reemplazar un `.exe` en uso).
+
+Opciones útiles:
+
+| Flag | Qué hace |
+|---|---|
+| `-NoBuild` | Reusa `dist/` como está, sin recompilar |
+| `-Name <texto>` + `-InstallDir <ruta>` + `-Port <n>` | Segundo portafolio independiente, con su propio atajo y datos |
+| `-Remove` | Borra los atajos y deja los datos intactos |
+| `-Remove -Purge` | Borra también el directorio de instalación (pide confirmación) |
+
+El ícono es `assets/catchup.ico`, ya versionado en el repo; se regenera con
+`go run ./scripts/mkicon` si se cambia la paleta de `internal/svg`.
+
 ## Empaquetado (compilar los binarios)
 
 ```bash
@@ -117,4 +153,6 @@ Solo vuelve a ejecutar el binario para seguir donde quedaste.
 
 **¿Puedo tener varios portafolios distintos?**
 Sí, corriendo el binario con un `-data` distinto para cada uno (y, si los
-corres al mismo tiempo, un `-port` distinto para cada instancia).
+corres al mismo tiempo, un `-port` distinto para cada instancia). Con atajos:
+`./scripts/install-shortcut.ps1 -Name "Catchup 2025" -InstallDir "$env:LOCALAPPDATA\Catchup-2025" -Port 8788`
+crea un segundo ícono con sus propios datos.

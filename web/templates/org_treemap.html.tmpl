@@ -1,13 +1,15 @@
 {{define "content"}}
-<div class="card">
-  <h1>Organización</h1>
-  <div class="org-tabs">
-    <a class="btn small secondary" href="/org/swimlanes">Swimlanes</a>
-    <a class="btn small" href="/org/treemap">Treemap</a>
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:var(--space-4)">
+  <div>
+    <h1 style="margin:0">Organización</h1>
+    <p class="hint">Área de cada sección proporcional a sus persona-días totales. Click en una sección para filtrar el swimlane.</p>
   </div>
-  <p class="hint">Área de cada sección proporcional a sus persona-días totales. Click en una sección para filtrar el swimlane.</p>
+  <div class="seg">
+    <a href="/org/swimlanes">Swimlanes</a>
+    <a aria-current="true" href="/org/treemap">Treemap</a>
+  </div>
 </div>
-<div class="card">
+<div class="card elev-sm" style="margin-top:var(--space-4)">
   {{template "treemap_svg" .SVG}}
 </div>
 {{end}}

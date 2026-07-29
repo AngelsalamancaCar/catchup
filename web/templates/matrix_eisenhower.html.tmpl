@@ -1,10 +1,8 @@
 {{define "content"}}
-<div class="card">
-  <h1>Matriz Eisenhower</h1>
-  <p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
-</div>
+<h1 style="margin:0">Matriz Eisenhower</h1>
+<p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
 
-<div class="card">
+<div class="card elev-sm" style="margin-top:var(--space-4)">
   <form hx-get="/matrix/eisenhower/svg" hx-target="#matrix-container" hx-swap="innerHTML" hx-trigger="change">
     <div class="threshold-controls">
       <div class="field">
@@ -22,22 +20,22 @@
   </form>
 </div>
 
-<div class="matrix-layout">
+<div class="matrix-layout" style="margin-top:var(--space-4)">
   <div id="matrix-container">
   {{template "matrix_container" .}}
   </div>
-  <div id="detail-panel" class="card detail-panel">
-    <p class="hint">Haz click en un punto para ver su desglose. Los puntos con borde punteado (ℹ) necesitan más información.</p>
+  <div id="detail-panel" class="card elev-sm detail-panel">
+    <p class="card-body">Haz click en un punto para ver su desglose. Los puntos con anillo punteado necesitan más información.</p>
   </div>
 </div>
 
-<div class="card">
-  <h2 style="margin-top:0;">Necesitan información (rankeadas por prioridad)</h2>
-  <p class="hint">Importancia × Incertidumbre — dónde conseguir más información cambia más la decisión.</p>
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">Necesitan información (rankeadas por prioridad)</div>
+  <p class="card-body">Importancia × Incertidumbre — dónde conseguir más información cambia más la decisión.</p>
   {{if not .InfoRanked}}
-    <p class="hint">Ninguna actividad mostrada tiene incertidumbre alta o respuestas marcadas como conjetura.</p>
+    <p class="card-body">Ninguna actividad mostrada tiene incertidumbre alta o respuestas marcadas como conjetura.</p>
   {{else}}
-  <table>
+  <table class="table">
     <thead><tr><th>Actividad</th><th>InfoPriority</th><th>Qué falta / quién lo tiene</th></tr></thead>
     <tbody>
     {{range .InfoRanked}}
@@ -48,28 +46,28 @@
   {{end}}
 </div>
 
-<div class="card">
-  <h2 style="margin-top:0;">Decide con lo que tienes</h2>
-  <p class="hint">Baja importancia y baja incertidumbre: seguir analizando aquí es tiempo perdido.</p>
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">Decide con lo que tienes</div>
+  <p class="card-body">Baja importancia y baja incertidumbre: seguir analizando aquí es tiempo perdido.</p>
   {{if not .DecideList}}
-    <p class="hint">Ninguna actividad mostrada cae en esta categoría.</p>
+    <p class="card-body">Ninguna actividad mostrada cae en esta categoría.</p>
   {{else}}
-  <ul>{{range .DecideList}}<li>{{.Name}}</li>{{end}}</ul>
+  <ul style="margin:0;padding-left:18px;font-size:13.5px">{{range .DecideList}}<li>{{.Name}}</li>{{end}}</ul>
   {{end}}
 </div>
 
-<div class="card">
-  <h2 style="margin-top:0;">En la frontera (±8 del umbral)</h2>
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">En la frontera (±8 del umbral)</div>
   {{if not .BorderlineList}}
-    <p class="hint">Ninguna actividad mostrada está cerca de un umbral.</p>
+    <p class="card-body">Ninguna actividad mostrada está cerca de un umbral.</p>
   {{else}}
-  <ul>{{range .BorderlineList}}<li>{{.Name}} — eje de {{.Axis}}</li>{{end}}</ul>
+  <ul style="margin:0;padding-left:18px;font-size:13.5px">{{range .BorderlineList}}<li>{{.Name}} — eje de {{.Axis}}</li>{{end}}</ul>
   {{end}}
 </div>
 {{end}}
 
 {{define "matrix_container"}}
-<div class="card">
+<div class="card elev-sm">
   {{template "matrix_svg" .SVG}}
 </div>
 {{end}}

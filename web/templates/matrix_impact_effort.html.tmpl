@@ -1,10 +1,8 @@
 {{define "content"}}
-<div class="card">
-  <h1>Matriz Impacto/Esfuerzo</h1>
-  <p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
-</div>
+<h1 style="margin:0">Matriz Impacto/Esfuerzo</h1>
+<p class="hint">{{.Count}} de {{.TotalCount}} actividades mostradas.</p>
 
-<div class="card">
+<div class="card elev-sm" style="margin-top:var(--space-4)">
   <form hx-get="/matrix/impact-effort/svg" hx-target="#matrix-container" hx-swap="innerHTML" hx-trigger="change">
     <div class="threshold-controls">
       <div class="field">
@@ -26,18 +24,18 @@
   </form>
 </div>
 
-<div class="matrix-layout">
+<div class="matrix-layout" style="margin-top:var(--space-4)">
   <div id="matrix-container">
   {{template "matrix_container" .}}
   </div>
-  <div id="detail-panel" class="card detail-panel">
-    <p class="hint">Haz click en un punto de la matriz para ver su desglose.</p>
+  <div id="detail-panel" class="card elev-sm detail-panel">
+    <p class="card-body">Haz click en un punto de la matriz para ver su desglose.</p>
   </div>
 </div>
 {{end}}
 
 {{define "matrix_container"}}
-<div class="card">
+<div class="card elev-sm">
   {{template "matrix_svg" .SVG}}
   <div class="legend">
   {{if eq .ColorMode "section"}}
@@ -45,11 +43,7 @@
     {{range .Sections}}<span class="legend-item"><span class="legend-dot" style="background:{{sectionColor $sections .}}"></span>{{.}}</span>{{end}}
   {{else}}
     <span class="legend-item">Fit estratégico (B1):</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#cfe4fa"></span>1</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#96c6fa"></span>2</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#479ef5"></span>3</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#0f6cbd"></span>4</span>
-    <span class="legend-item"><span class="legend-dot" style="background:#0e4775"></span>5</span>
+    {{range fitLegend}}<span class="legend-item"><span class="legend-dot" style="background:{{.Color}}"></span>{{.Value}}</span>{{end}}
   {{end}}
   </div>
 </div>
