@@ -70,6 +70,48 @@ backup manual (copiar el JSON de datos) también sirve.
   `org-swimlanes`, `org-treemap`, `timeline`): el mismo SVG que ves en
   pantalla, como archivo descargable.
 
+## Cargar actividades en masa desde Excel
+
+Configuración → "Cargar actividades desde Excel" es el camino para capturar
+varias actividades sin pasar por el cuestionario una por una:
+
+1. **Descargar template** (`GET /import/template.xlsx`): un `.xlsx` con la hoja
+   `Actividades` (una fila por actividad, con desplegables que traen las
+   opciones exactas del cuestionario y las secciones configuradas), la hoja
+   `Entregables`, una hoja `Gantt` que se calcula sola y una hoja
+   `Instrucciones` con el glosario de cada columna.
+2. **Llenarlo**. Cada bloque del cuestionario tiene su banda de color
+   (A Identificación, B Impacto, C Esfuerzo, D Urgencia/importancia,
+   F Información) y todas las celdas de opción cerrada son desplegables: las
+   preguntas 1–5 se eligen con su ancla incluida ("4 — Apoya un objetivo
+   estratégico principal"), no como número suelto. La columna
+   **¿Fila completa?** —calculada, la ignora el import— marca en verde/ámbar si
+   a la fila le falta algún obligatorio, y los obligatorios vacíos se resaltan
+   en la propia celda. En `Entregables`, la columna `Actividad` es un desplegable
+   con los nombres que escribiste en la hoja anterior y "Depende de" con los
+   entregables ya capturados (el ID `DLV-NNN` lo asigna Catchup al importar).
+3. **Subirlo** (`POST /import/xlsx`, campo `file`). La carga es **todo-o-nada**:
+   si alguna fila tiene un error no se escribe nada y la página lista cada
+   problema con hoja, fila y columna. Las filas de ejemplo del template
+   (prefijo `EJEMPLO`) se omiten solas, así que se pueden dejar.
+
+El Gantt es un gráfico de barras apiladas nativo de Excel: la hoja `Gantt` lee
+`Entregables` con fórmulas (desplazamiento y duración en días desde el inicio
+del portafolio) y la primera serie va sin relleno, así la barra visible empieza
+en la fecha de inicio de cada entregable. La columna `Inicio` existe solo para
+ese gráfico — Catchup guarda la fecha `Fin` como fecha del entregable.
+
+Como el import busca la fila de encabezados en las primeras filas de la hoja y
+mapea las columnas por nombre —aceptando tanto las etiquetas de los desplegables
+como las claves internas (`Project`, `breach`, `60-120`…)—, un archivo bajado con
+"Descargar Excel" también se puede editar y volver a subir. Cada carga **crea**
+actividades nuevas: no actualiza ni reemplaza las existentes.
+
+El template se genera al momento de cada descarga, así que no hay archivo que
+mantener ni reemplazar: al actualizar el binario, el siguiente "Descargar
+template" ya trae la versión nueva (y las secciones que tengas configuradas en
+ese momento).
+
 ## Cómo importar un backlog existente
 
 Si ya tienes una lista de actividades en Excel, `scripts/import_backlog.py`

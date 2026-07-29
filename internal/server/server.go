@@ -101,6 +101,8 @@ func (s *Server) routes() {
 	s.mux.HandleFunc("GET /export/svg/{view}", s.handleExportSVG)
 	s.mux.HandleFunc("POST /export/backup", s.handleExportBackup)
 	s.mux.HandleFunc("POST /import", s.handleImport)
+	s.mux.HandleFunc("GET /import/template.xlsx", s.handleImportTemplate)
+	s.mux.HandleFunc("POST /import/xlsx", s.handleImportXLSX)
 }
 
 // isHX reporta si la petición viene de htmx (para decidir fragmento vs página completa).

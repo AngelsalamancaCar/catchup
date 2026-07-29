@@ -101,4 +101,17 @@
   <div class="card-title">Timeline de entregables</div>
   <p class="card-body">Un entregable se marca <strong>at-risk</strong> si su estado no es "hecho" y vence antes de 14 días, o si depende (directa o transitivamente) de otro entregable en riesgo.</p>
 </div>
+
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">Carga masiva desde Excel</div>
+  <p class="card-body">Para capturar varias actividades de una vez, en <a href="/config">Configuración</a> → "Cargar actividades desde Excel":</p>
+  <ol style="margin:var(--space-2) 0 0;padding-left:18px;font-size:13.5px;opacity:0.85">
+    <li><strong>Descarga el template</strong>. Trae los desplegables con las opciones exactas del cuestionario y las secciones que tengas configuradas hoy.</li>
+    <li><strong>Llena la hoja Actividades</strong>: una fila por actividad. Cada bloque del cuestionario tiene su banda de color y todas las opciones cerradas son desplegables — las preguntas 1–5 se eligen con su descripción incluida. Las columnas con <code>*</code> son obligatorias: si te falta alguna, la celda se resalta y la columna <em>¿Fila completa?</em> lo avisa.</li>
+    <li><strong>Llena la hoja Entregables</strong>: una fila por entregable. La columna Actividad es un desplegable con los nombres que capturaste en la hoja anterior, y "Depende de" con los entregables ya escritos (no con su ID).</li>
+    <li><strong>Revisa la hoja Gantt</strong>: se calcula sola con las columnas Inicio y Fin de la hoja Entregables. El Inicio existe solo para dibujar la barra; Catchup guarda la fecha Fin como fecha del entregable.</li>
+    <li><strong>Sube el archivo</strong>. La carga es todo-o-nada: si alguna fila tiene un error no se importa nada y se listan los problemas con hoja, fila y columna.</li>
+  </ol>
+  <p class="card-body">Las filas de ejemplo del template (las que empiezan con "EJEMPLO") se omiten solas, así que se pueden dejar. Cada carga <strong>crea</strong> actividades nuevas: no actualiza ni reemplaza las existentes. Un archivo bajado con "Descargar Excel" también se puede editar y volver a subir, porque el import acepta tanto las etiquetas del desplegable como las claves internas.</p>
+</div>
 {{end}}

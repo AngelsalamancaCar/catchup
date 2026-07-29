@@ -54,7 +54,26 @@
 </div>
 
 <div class="card elev-sm" style="margin-top:var(--space-4)">
-  <div class="card-title">Importar backlog</div>
+  <div class="card-title">Cargar actividades desde Excel</div>
+  <p class="card-body">Descarga el template, llena la hoja <strong>Actividades</strong> (una fila por actividad) y la hoja
+    <strong>Entregables</strong>; la hoja <strong>Gantt</strong> se arma sola con las fechas de inicio y fin. Todas las
+    opciones cerradas se eligen con desplegable —incluidas las escalas 1–5 con su descripción— y la columna
+    <em>¿Fila completa?</em> avisa si falta un dato obligatorio. Después sube el mismo archivo acá para crear todas las
+    actividades de una vez. La carga es todo-o-nada: si alguna fila tiene un error no se importa nada y se listan los
+    problemas con su número de fila.</p>
+  <div class="actions">
+    <a class="btn btn-secondary" href="/import/template.xlsx">Descargar template (.xlsx)</a>
+  </div>
+  <form method="post" action="/import/xlsx" enctype="multipart/form-data" style="margin-top:var(--space-3)">
+    <div class="field">
+      <input class="input" type="file" name="file" accept=".xlsx" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Subir Excel</button>
+  </form>
+</div>
+
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">Importar backlog (JSON)</div>
   <p class="card-body">Sube el JSON generado por <code>scripts/import_backlog.py</code> (o cualquier archivo con la forma <code>{"activities": [...]}</code>).</p>
   <form method="post" action="/import" enctype="multipart/form-data">
     <div class="field">
@@ -62,7 +81,24 @@
     </div>
     <button type="submit" class="btn btn-primary">Importar</button>
   </form>
+</div>
+
+{{if or .ImportResult .ImportErr .ImportWarnings}}
+<div class="card elev-sm" style="margin-top:var(--space-4)">
+  <div class="card-title">Resultado de la importación</div>
   {{if .ImportResult}}<p class="card-body">{{.ImportResult}}</p>{{end}}
   {{if .ImportErr}}<div class="error">{{.ImportErr}}</div>{{end}}
+  {{if .ImportErrors}}
+  <ul class="import-log">
+    {{range .ImportErrors}}<li class="error">{{.}}</li>{{end}}
+  </ul>
+  {{end}}
+  {{if .ImportWarnings}}
+  <p class="card-body" style="margin-top:var(--space-2)">Avisos (se importó igual):</p>
+  <ul class="import-log">
+    {{range .ImportWarnings}}<li class="hint">{{.}}</li>{{end}}
+  </ul>
+  {{end}}
 </div>
+{{end}}
 {{end}}

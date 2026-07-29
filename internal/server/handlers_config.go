@@ -14,14 +14,20 @@ const weightSumEpsilon = 0.005
 
 // ConfigPageData es el contexto de la página de configuración.
 type ConfigPageData struct {
-	Title        string
-	Nav          string
-	Sections     []string
-	SectionsErr  string
-	Weights      model.Weights
-	WeightsErr   string
-	ImportResult string
-	ImportErr    string
+	Title       string
+	Nav         string
+	Sections    []string
+	SectionsErr string
+	Weights     model.Weights
+	WeightsErr  string
+
+	// Resultado de la última importación (JSON o Excel): ImportErr es el
+	// resumen, ImportErrors el detalle fila por fila e ImportWarnings lo que se
+	// importó igual pero conviene revisar.
+	ImportResult   string
+	ImportErr      string
+	ImportErrors   []string
+	ImportWarnings []string
 }
 
 func (s *Server) configPageData() ConfigPageData {
